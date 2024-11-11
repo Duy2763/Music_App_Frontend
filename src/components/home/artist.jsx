@@ -8,6 +8,7 @@ import SuffleIconActive from "../icon/suffleIconActive";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RenderListSongs from "./renderListSongs";
 import RenderListAlbume from "./renderListAlbume";
+import colors from "../../colors";
 
 export default function ArtistScreen() {
     const navigation = useNavigation();
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
        marginVertical: 16
     },
     viewMoreText: {
-        color: '#25C3D9',
+        color: colors.primaryColor,
         fontSize: 16
     }
 })

@@ -31,7 +31,7 @@ export default function App() {
       <NavigationContainer>
         <Tab.Navigator tabBar={(props) => <Navbar {...props} />}>
           <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
-          <Tab.Screen name="Search" component={SearchScreen} />
+          <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} />
           <Tab.Screen name="Feed" component={FeedScreen} />
           <Tab.Screen name="Library" component={LibraryScreen} />
         </Tab.Navigator>
