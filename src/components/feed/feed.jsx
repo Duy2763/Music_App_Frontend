@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageBackground, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native"
+import { Animated, Dimensions, Image, ImageBackground, ScrollView, StatusBar, StyleSheet, TouchableOpacity } from "react-native"
 import { SafeAreaView, Text, View } from "react-native"
 import CastIcon from "../icon/castIcon"
 import colors from "../../colors"
@@ -10,13 +10,19 @@ import CircleIconTemplate from "../icon/circleIconTemplate"
 import HeartIconTemplate from "../icon/heartIconTemplate"
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconAndSoOn from "../icon/iconAndSoOn"
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { Modal } from "react-native"
+import DownIconTemplate from "../icon/downIconTemplate";
 const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 
 export default function FeedScreen() {
     const [isActiveHeart, setActiveHeart] = useState(false);
     const [isOpenComment, setOpenComment] = useState(false);
+    const [isBlurVisible, setIsBlurVisible] = useState(false);
+    const translateY = useRef(new Animated.Value(height)).current;
+
     const arrArtists = [
         {id: '1', name: 'Jennifer Wilson', hinhAnh: require('../../../assets/home/Image39.png'), followers: 65.1, about: {hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' }},
         {id: '2', name: 'Elizabeth Hall', hinhAnh: require('../../../assets/home/Image40.png'), followers: 63.1, about: {hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' }},
@@ -58,7 +64,7 @@ export default function FeedScreen() {
                         user: {
                             id: '1',
                             name: 'duy',
-                            hinhAnh: require('../../../assets/home/Image41.png')
+                            hinhAnh: require('../../../assets/home/Image39.png')
                         },
                         replies: [
                             {
@@ -91,7 +97,7 @@ export default function FeedScreen() {
                     {
                         id: '2',
                         text: 'Tuyệt vời',
-                        imestamp: '2024-11-12T11:16:00.000Z',
+                        timestamp: '2024-11-12T11:16:00.000Z',
                         likeCounts: 10,
                         user: {
                             id: '4',
@@ -118,6 +124,24 @@ export default function FeedScreen() {
             },
         }
     ]
+
+    const toggleModal = () => {
+        setOpenComment(!isOpenComment)
+        if (!isOpenComment) {
+            Animated.timing(translateY, {
+                toValue: height / 3,
+                duration: 300,
+                useNativeDriver: true,
+            }).start(() => setIsBlurVisible(true));
+        } else {
+            setIsBlurVisible(false);
+            Animated.timing(translateY, {
+                toValue: height,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        }
+    };
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: colors.secondaryColor}}>
@@ -182,14 +206,96 @@ export default function FeedScreen() {
                                             </TouchableOpacity>
                                             <Text  style={styles.feedSocialLeftItemCount}>{feed.track.likeCounts}</Text>
                                         </View>
-                                        <View style={styles.feedSocialLeftItem}>
-                                            <Icon name="comment" size={16} color={colors.thirdColor} />
-                                            <Text  style={styles.feedSocialLeftItemCount}>{feed.track.comments.length}</Text>
-                                        </View>
+                                        <TouchableOpacity onPress={toggleModal}>
+                                            <View style={styles.feedSocialLeftItem}>
+                                                
+                                                    <Icon name="comment" size={16} color={colors.thirdColor} />
+                                                <Text  style={styles.feedSocialLeftItemCount}>{feed.track.comments.length}</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                         <View style={styles.feedSocialLeftItem}>
                                             <Icon name="retweet" size={16} color={colors.thirdColor} />
                                             <Text  style={styles.feedSocialLeftItemCount}>{feed.track.retweetCounts}</Text>
                                         </View>
+                                        <Modal
+                                            visible={isOpenComment}
+                                            transparent={true}
+                                            animationType="slide"
+                                            onRequestClose={toggleModal}
+                                        >
+                                            <View style={styles.modalContainer}>
+                                                <View style={styles.modalContent}>
+                                                    <View style={styles.modalHeader}>
+                                                        <Text style={{fontSize: 18}}>{feed.track.comments.length} comments</Text>
+                                                        <TouchableOpacity onPress={toggleModal}>
+                                                            <DownIconTemplate size={24} color={colors.thirdColor}/>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                    <ScrollView>
+                                                        {
+                                                            feed.track.comments.map(comment => (
+                                                                <View key={comment.id}>
+                                                                    <View style={styles.commentItem}>
+                                                                        <View style={styles.commentItemLeftContainer}>
+                                                                            <Image
+                                                                                style={styles.avatarComment}
+                                                                                source={comment.user.hinhAnh}
+                                                                            />
+                                                                            <View style={styles.commentItemLeft}>
+                                                                                <View style={styles.commentItemLeftTop}>
+                                                                                    <Text style={styles.commentItemLeftTopName}>{comment.user.name}</Text>
+                                                                                    <Text style={styles.commentItemLeftTopComment}>{comment.text}</Text>
+                                                                                </View>
+                                                                                <View style={styles.commentItemLeftBottom}>
+                                                                                    <Text style={styles.commentItemLeftBottomName}>{getTimeDifference(comment.timestamp)}</Text>
+                                                                                    <Text style={styles.commentItemLeftBottomName}>{comment.likeCounts} like</Text>
+                                                                                    <TouchableOpacity>
+                                                                                        <Text style={styles.commentItemLeftBottomName}>Reply</Text>
+                                                                                    </TouchableOpacity>
+                                                                                </View>
+                                                                            </View>
+                                                                        </View>
+                                                                        <View>
+                                                                            <HeartIconTemplate size={15} color={colors.thirdColor}/>
+                                                                        </View>
+                                                                    </View>
+                                                                    <View>
+                                                                        {
+                                                                            comment.replies.map(reply => {
+                                                                                <View style={styles.commentItem} key={reply.id}>
+                                                                                    <View style={styles.commentItemLeftContainer}>
+                                                                                        <Image
+                                                                                            style={styles.avatarComment}
+                                                                                            source={comment.user.hinhAnh}
+                                                                                        />
+                                                                                        <View style={styles.commentItemLeft}>
+                                                                                            <View style={styles.commentItemLeftTop}>
+                                                                                                <Text style={styles.commentItemLeftTopName}>{reply.user.name}</Text>
+                                                                                                <Text style={styles.commentItemLeftTopComment}>{reply.text}</Text>
+                                                                                            </View>
+                                                                                            <View style={styles.commentItemLeftBottom}>
+                                                                                                <Text style={styles.commentItemLeftBottomName}>{getTimeDifference(reply.timestamp)}</Text>
+                                                                                                <Text style={styles.commentItemLeftBottomName}>{reply.likeCounts} like</Text>
+                                                                                                <TouchableOpacity>
+                                                                                                    <Text style={styles.commentItemLeftBottomName}>Reply</Text>
+                                                                                                </TouchableOpacity>
+                                                                                            </View>
+                                                                                        </View>
+                                                                                    </View>
+                                                                                    <View>
+                                                                                        <HeartIconTemplate size={15} color={colors.thirdColor}/>
+                                                                                    </View>
+                                                                                </View>
+                                                                            })
+                                                                        }
+                                                                    </View>
+                                                                </View>
+                                                            ))
+                                                        }
+                                                    </ScrollView>
+                                                </View>
+                                            </View>
+                                        </Modal>
                                     </View>
                                     <IconAndSoOn/>
                                 </View>
@@ -198,11 +304,49 @@ export default function FeedScreen() {
                     }
                 </ScrollView>
             </View>
+            
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
+    commentItemLeftContainer: {
+        flexDirection: 'row',
+        gap: 6,
+    },
+    avatarComment: {
+        width: 37,
+        height: 37
+    },
+    commentItemLeft: {
+        gap: 4
+    },
+    commentItemLeftTop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4
+    },
+    commentItemLeftTopName: {
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    commentItemLeftTopComment: {
+    },
+    commentItemLeftBottom: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8
+    },
+    commentItemLeftBottomName: {
+        fontSize: 12
+    },
+    commentItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+
+
     container: {
         backgroundColor: colors.secondaryColor,
         paddingHorizontal: 24
@@ -295,5 +439,39 @@ const styles = StyleSheet.create({
     feedSocialLeftItemCount: {
         color: colors.thirdColor,
         fontSize: 16
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        height: height * 2 / 3,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    closeButton: {
+        marginTop: 20,
+        color: 'blue',
+    },
+    blurBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: height * 2 / 3,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        alignItems: 'center', 
+        justifyContent: 'space-between'
     }
 })
