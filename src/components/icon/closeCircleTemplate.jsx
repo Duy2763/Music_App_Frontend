@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
-const CloseCircleTemplate  = () => (
-  <Icon name="circle" size={10} color="gray" />
+const CloseCircleTemplate  = ({size, color}) => (
+  <Icon name="close-circle" size={size} color={color}/>
 );
 
 export default CloseCircleTemplate ;
