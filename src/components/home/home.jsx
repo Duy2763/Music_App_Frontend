@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'lightgray',
         padding: 10,
-        borderRadius: '50%',
+        borderRadius: 32,
         gap: 8
     },
     searchIcon: {

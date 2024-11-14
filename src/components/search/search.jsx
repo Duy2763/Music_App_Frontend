@@ -15,7 +15,7 @@ export default function SearchScreen() {
     ]
     const [ activeOption, setActiveOption ] = useState('All');
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: colors.secondaryColor}}>
             <View style={styles.container}>
                 <View style={styles.search}>
                     <Image
@@ -45,7 +45,8 @@ export default function SearchScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
+        backgroundColor: colors.secondaryColor
     },
     search: {
         flexDirection: 'row',
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'lightgray',
         padding: 10,
-        borderRadius: '50%',
+        borderRadius: 32,
         gap: 8
     },
     searchIcon: {
