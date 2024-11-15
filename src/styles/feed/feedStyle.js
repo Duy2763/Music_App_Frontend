@@ -13,14 +13,15 @@ export default feedStyle = StyleSheet.create({
     headerTop: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        paddingBottom: 8
     },
     headerTopText: {
         fontSize: 18,
         fontWeight: 'bold',
     },
     feedContainer: {
-        marginVertical: 24
+        marginVertical: 16
     },
     feedTitle: {
         flexDirection: 'row',

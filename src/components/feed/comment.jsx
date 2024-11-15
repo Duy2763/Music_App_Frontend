@@ -28,7 +28,7 @@ export default function Comments({ comments }) {
     };
 
     return (
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
             {
                 comments.map(comment => (
                     <View key={comment.id} style={feedStyle.commentContainer}>

@@ -239,7 +239,6 @@ export default function FeedScreen() {
                 </View>
                 <Feed arrFeeds={arrFeeds}/>
             </View>
-            
         </SafeAreaView>
     )
 }
