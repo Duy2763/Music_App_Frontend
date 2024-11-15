@@ -19,27 +19,40 @@ import feedStyle from "../../styles/feed/feedStyle.js"
 
 
 export default function Feed({ arrFeeds }) {
-    const [isOpenComment, setOpenComment] = useState(false);
+    const [openComments, setOpenComments] = useState(null); // Track the ID of the open modal
     const [isBlurVisible, setIsBlurVisible] = useState(false);
     const translateY = useRef(new Animated.Value(height)).current;
+    const [likedPosts, setLikedPosts] = useState({});
 
-    const toggleModal = () => {
-        setOpenComment(!isOpenComment)
-        if (!isOpenComment) {
-            Animated.timing(translateY, {
-                toValue: height / 3,
-                duration: 300,
-                useNativeDriver: true,
-            }).start(() => setIsBlurVisible(true));
-        } else {
+    const toggleModal = (id) => {
+        const isCurrentlyOpen = openComments === id; // Check if the clicked modal is already open
+        if (isCurrentlyOpen) {
+            // Close the modal if it was already open
+            setOpenComments(null);
             setIsBlurVisible(false);
             Animated.timing(translateY, {
                 toValue: height,
                 duration: 300,
                 useNativeDriver: true,
             }).start();
+        } else {
+            // Open the new modal
+            setOpenComments(id);
+            Animated.timing(translateY, {
+                toValue: height / 3,
+                duration: 300,
+                useNativeDriver: true,
+            }).start(() => setIsBlurVisible(true));
         }
     };
+
+    const toggleLike = (id) => {
+        setLikedPosts((prevLikedPosts) => ({
+            ...prevLikedPosts,
+            [id]: !prevLikedPosts[id], // Toggle like state
+        }));
+    };
+
     return (
         <ScrollView>
             {
@@ -86,43 +99,47 @@ export default function Feed({ arrFeeds }) {
                         <View style={feedStyle.feedSocial}>
                             <View style={feedStyle.feedSocialLeft}>
                                 <View style={feedStyle.feedSocialLeftItem}>
-                                    <TouchableOpacity>
-                                        <HeartIconTemplate size={16} color={colors.thirdColor}/>
+                                    <TouchableOpacity onPress={() => toggleLike(feed.id)}>
+                                        <HeartIconTemplate 
+                                            size={16} 
+                                            color={likedPosts[feed.id] ? 'red' : colors.thirdColor} 
+                                        />
                                     </TouchableOpacity>
                                     <Text  style={feedStyle.feedSocialLeftItemCount}>{feed.track.likeCounts}</Text>
                                 </View>
-                                <TouchableOpacity onPress={toggleModal}>
+                                <TouchableOpacity onPress={() => toggleModal(feed.id)}>
                                     <View style={feedStyle.feedSocialLeftItem}>
-                                        
-                                            <Icon name="comment" size={16} color={colors.thirdColor} />
-                                        <Text  style={feedStyle.feedSocialLeftItemCount}>{feed.track.comments.length}</Text>
+                                        <Icon name="comment" size={16} color={colors.thirdColor} />
+                                    <Text  style={feedStyle.feedSocialLeftItemCount}>{feed.track.comments.length}</Text>
                                     </View>
                                 </TouchableOpacity>
                                 <View style={feedStyle.feedSocialLeftItem}>
                                     <Icon name="retweet" size={16} color={colors.thirdColor} />
                                     <Text  style={feedStyle.feedSocialLeftItemCount}>{feed.track.retweetCounts}</Text>
                                 </View>
-                                <Modal
-                                    visible={isOpenComment}
-                                    transparent={true}
-                                    animationType="slide"
-                                    onRequestClose={toggleModal}
-                                >
-                                    <View style={feedStyle.modalContainer}>
-                                        <View style={feedStyle.modalContent}>
-                                            <View style={feedStyle.modalHeader}>
-                                                <Text style={{fontSize: 18}}>{feed.track.comments.length} comments</Text>
-                                                <TouchableOpacity onPress={toggleModal}>
-                                                    <DownIconTemplate size={24} color={colors.thirdColor}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                            <Comment comments={feed.track.comments}/>
-                                        </View>
-                                    </View>
-                                </Modal>
                             </View>
                             <IconAndSoOn/>
                         </View>
+
+                        {/* Modal for comments */}
+                        <Modal
+                            visible={openComments === feed.id} // Show modal only if this feed's id matches the open id
+                            transparent={true}
+                            animationType="slide"
+                            onRequestClose={() => toggleModal(feed.id)}
+                        >
+                            <View style={feedStyle.modalContainer}>
+                                <View style={feedStyle.modalContent}>
+                                    <View style={feedStyle.modalHeader}>
+                                        <Text style={{fontSize: 18}}>{feed.track.comments.length} comments</Text>
+                                        <TouchableOpacity onPress={() => toggleModal(feed.id)}>
+                                            <DownIconTemplate size={24} color={colors.thirdColor}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <Comment comments={feed.track.comments}/>
+                                </View>
+                            </View>
+                        </Modal>
                     </View>
                 ))
             }

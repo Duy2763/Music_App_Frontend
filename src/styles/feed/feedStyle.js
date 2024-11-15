@@ -116,6 +116,7 @@ export default feedStyle = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
+    
     closeButton: {
         marginTop: 20,
         color: 'blue',

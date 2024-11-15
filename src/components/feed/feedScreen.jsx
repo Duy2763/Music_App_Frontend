@@ -121,6 +121,110 @@ export default function FeedScreen() {
                     }
                 ]
             },
+        },
+        {
+            id: '2',
+            timestamp: '2024-11-12T11:14:18.000Z',
+            artist: {
+                id: '1', 
+                name: 'Jennifer Wilson', 
+                hinhAnh: require('../../../assets/home/Image39.png'), 
+                followers: 65.1, 
+                about: {
+                    hinhAnh: require('../../../assets/home/Image73.png'), 
+                    description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' 
+                }
+            },
+            track: {
+                id: '2', 
+                name: 'In the starts', 
+                artist: 'Benson Boone', 
+                hinhAnh: require('../../../assets/home/Image45.png'),
+                listens: 125,
+                likeCounts: 100,
+                retweetCounts: 2,
+                comments: [
+                    {
+                        id: '1',
+                        text: 'Hay quá đi',
+                        timestamp: '2024-11-12T11:15:00.000Z',
+                        likeCounts: 20,
+                        user: {
+                            id: '1',
+                            name: 'duy',
+                            hinhAnh: require('../../../assets/home/Image39.png')
+                        },
+                        replies: [
+                            {
+                                id: '1',
+                                text: 'Hay thiệt!!!',
+                                timestamp: '2024-11-12T11:16:00.000Z',
+                                likeCounts: 20,
+                                user: {
+                                    id: '1',
+                                    name: 'duy',
+                                    hinhAnh: require('../../../assets/home/Image41.png')
+                                },
+
+                            },
+                            {
+                                id: '2',
+                                text: 'Cảm ơn bạn!!!',
+                                timestamp: '2024-11-12T11:17:00.000Z',
+                                likeCounts: 20,
+                                user: {
+                                    id: '2',
+                                    name: 'Jennifer Wilson',
+                                    hinhAnh: require('../../../assets/home/Image39.png')
+                                },
+
+                            }
+                        ]
+
+                    },
+                    {
+                        id: '2',
+                        text: 'Tuyệt vời',
+                        timestamp: '2024-11-12T11:16:00.000Z',
+                        likeCounts: 10,
+                        user: {
+                            id: '4',
+                            name: 'hehehe',
+                            hinhAnh: require('../../../assets/home/Image40.png')
+                        },
+                        replies: [
+                            {
+                                id: '1',
+                                text: 'Cảm ơn bạn!!!',
+                                timestamp: '2024-11-12T11:17:00.000Z',
+                                likeCounts: 20,
+                                user: {
+                                    id: '2',
+                                    name: 'Jennifer Wilson',
+                                    hinhAnh: require('../../../assets/home/Image39.png')
+                                },
+
+                            }
+                        ]
+
+                    },
+                    {
+                        id: '3',
+                        text: 'Hay đấy chứ',
+                        timestamp: '2024-11-12T11:16:00.000Z',
+                        likeCounts: 10,
+                        user: {
+                            id: '4',
+                            name: 'hehehe',
+                            hinhAnh: require('../../../assets/home/Image40.png')
+                        },
+                        replies: [
+                            
+                        ]
+
+                    }
+                ]
+            },
         }
     ]
 
