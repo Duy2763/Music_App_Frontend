@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons'; // Import bộ icon bạn muốn sử dụng
+import Icon from 'react-native-vector-icons/Ionicons'; 
 
 const Navbar = ({ state, descriptors, navigation }) => {
   const icons = {
@@ -51,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#fff',
-    padding: 10,
+    paddingBottom: 10,
     borderTopWidth: 1,
     borderTopColor: 'lightgray'
   },

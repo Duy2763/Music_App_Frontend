@@ -8,7 +8,8 @@ const { height } = Dimensions.get('window');
 export default feedStyle = StyleSheet.create({
     container: {
         backgroundColor: colors.secondaryColor,
-        paddingHorizontal: 24
+        paddingHorizontal: 24,
+        marginBottom: 32
     },
     headerTop: {
         flexDirection: 'row',
@@ -21,7 +22,8 @@ export default feedStyle = StyleSheet.create({
         fontWeight: 'bold',
     },
     feedContainer: {
-        marginVertical: 16
+        marginTop: 18,
+        marginBottom: 16,
     },
     feedTitle: {
         flexDirection: 'row',

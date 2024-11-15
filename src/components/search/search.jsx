@@ -10,13 +10,13 @@ import { useState } from "react"
 export default function SearchScreen() {
     const [search, setSearch] = useState('');
     const [isFocused, setIsFocused] = useState(false);
+    const [ activeOption, setActiveOption ] = useState('All');
     const arrOptions = [
         {id: 1, option: 'All'},
         {id: 2, option: 'Tracks'},
         {id: 3, option: 'Albums'},
         {id: 4, option: 'Artists'},
     ]
-    const [ activeOption, setActiveOption ] = useState('All');
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: colors.secondaryColor}}>
             <View style={styles.container}>

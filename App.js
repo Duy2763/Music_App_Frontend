@@ -10,6 +10,9 @@ import ChartScreen from './src/components/home/chart.jsx';
 import AlbumeScreen from './src/components/home/album.jsx';
 import ArtistScreen from './src/components/home/artist.jsx';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Songs from './src/components/library/songs.jsx';
+import Albums from './src/components/library/albums.jsx';
+import Artists from './src/components/library/artists.jsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -23,14 +26,23 @@ const HomeStack = () => (
   </Stack.Navigator>
 )
 
+const LibraryStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name='LibraryMain' component={LibraryScreen} options={{headerShown: false}}/>
+    <Stack.Screen name='Songs' component={Songs} options={{headerShown: false}}/>
+    <Stack.Screen name='Albumes' component={Albums} options={{headerShown: false}}/>
+    <Stack.Screen name='Artist' component={Artists} options={{headerShown: false}}/>
+  </Stack.Navigator>
+)
+
 export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator tabBar={(props) => <Navbar {...props} />}>
         {/* <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
-        <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} /> */}
-        <Tab.Screen name="Feed" component={FeedScreen} options={{ headerShown: false }} />
-        {/* <Tab.Screen name="Library" component={LibraryScreen} /> */}
+        <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} />
+        <Tab.Screen name="Feed" component={FeedScreen} options={{ headerShown: false }} /> */}
+        <Tab.Screen name="Library" component={LibraryStack} options={{ headerShown: false }} />
       </Tab.Navigator>
     </NavigationContainer>
     

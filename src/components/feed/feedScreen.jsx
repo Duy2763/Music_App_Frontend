@@ -231,7 +231,7 @@ export default function FeedScreen() {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: colors.secondaryColor}}>
-             <StatusBar backgroundColor={colors.secondaryColor} barStyle="dark-content" />
+            <StatusBar backgroundColor={colors.secondaryColor} barStyle="dark-content" />
             <View style={feedStyle.container}>
                 <View style={feedStyle.headerTop}>
                     <Text style={feedStyle.headerTopText}>Feed</Text>
