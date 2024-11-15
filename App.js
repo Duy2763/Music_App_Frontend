@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Navbar from './src/components/navbar/navbar.jsx';
 import HomeScreen from './src/components/home/home.jsx';
 import SearchScreen from './src/components/search/search.jsx';
-import FeedScreen from './src/components/feed/feed.jsx';
+import FeedScreen from './src/components/feed/feedScreen.jsx';
 import LibraryScreen from './src/components/library/library.jsx';
 import ChartScreen from './src/components/home/chart.jsx';
 import AlbumeScreen from './src/components/home/album.jsx';
