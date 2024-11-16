@@ -13,6 +13,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Songs from './src/components/library/songs.jsx';
 import Albums from './src/components/library/albums.jsx';
 import Artists from './src/components/library/artists.jsx';
+import WelcomePremium from './src/components/end/welcomePremium.jsx';
+import OptionPremium from './src/components/end/optionPremium.jsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -32,6 +34,8 @@ const LibraryStack = () => (
     <Stack.Screen name='Songs' component={Songs} options={{headerShown: false}}/>
     <Stack.Screen name='Albums' component={Albums} options={{headerShown: false}}/>
     <Stack.Screen name='Artists' component={Artists} options={{headerShown: false}}/>
+    <Stack.Screen name='WelcomePremium' component={WelcomePremium} options={{headerShown: false}}/>
+    <Stack.Screen name='OptionPremium' component={OptionPremium} options={{headerShown: false}}/>
   </Stack.Navigator>
 )
 
@@ -39,9 +43,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator tabBar={(props) => <Navbar {...props} />}>
-        {/* <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+        <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
         <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} />
-        <Tab.Screen name="Feed" component={FeedScreen} options={{ headerShown: false }} /> */}
+        <Tab.Screen name="Feed" component={FeedScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Library" component={LibraryStack} options={{ headerShown: false }} />
       </Tab.Navigator>
     </NavigationContainer>

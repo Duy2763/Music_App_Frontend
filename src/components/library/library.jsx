@@ -34,9 +34,9 @@ export default function LibraryScreen() {
                     ))}
                 </View>
             </View>
-            <View style={styles.plusIconContainer}>
+            <TouchableOpacity style={styles.plusIconContainer} onPress={() => navigation.navigate('WelcomePremium')}>
                 <PlusIcon color='#fff' size={20}/>
-            </View>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }
