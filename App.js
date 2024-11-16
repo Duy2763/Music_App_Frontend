@@ -30,8 +30,8 @@ const LibraryStack = () => (
   <Stack.Navigator>
     <Stack.Screen name='LibraryMain' component={LibraryScreen} options={{headerShown: false}}/>
     <Stack.Screen name='Songs' component={Songs} options={{headerShown: false}}/>
-    <Stack.Screen name='Albumes' component={Albums} options={{headerShown: false}}/>
-    <Stack.Screen name='Artist' component={Artists} options={{headerShown: false}}/>
+    <Stack.Screen name='Albums' component={Albums} options={{headerShown: false}}/>
+    <Stack.Screen name='Artists' component={Artists} options={{headerShown: false}}/>
   </Stack.Navigator>
 )
 
