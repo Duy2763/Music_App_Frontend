@@ -11,6 +11,7 @@ import { Modal } from "react-native";
 import { SafeAreaView } from "react-native";
 import { BlurView } from "expo-blur";
 import DownIcon from "../icon/downIcon";
+import { API_URL } from '@env';
 
 
 export default function MiniPlayer({song}) {
@@ -24,11 +25,11 @@ export default function MiniPlayer({song}) {
                     <View style={styles.contentLeft}>
                         <Image
                             style={styles.image}
-                            source={song.hinhAnh}
+                            source={{uri: `${API_URL}/assets/images/song/${song.image}`}}
                         />
                         <View style={styles.contentLeftCenter}>
                             <Text style={[styles.text, { fontSize: 16}]}>{song.name}</Text>
-                            <Text style={[styles.text, {color: 'gray'}]}>{song.artist}</Text>
+                            <Text style={[styles.text, {color: 'gray'}]}>{song.artist.name}</Text>
                         </View>
                     </View>
                     <View style={styles.contentRight}>
@@ -45,7 +46,7 @@ export default function MiniPlayer({song}) {
                 <SafeAreaView style={{flex: 1}}> 
                     <ImageBackground 
                         style={styles.imageBackground}
-                        source={song.hinhAnh}
+                        source={{uri: `${API_URL}/assets/images/song/${song.image}`}}
                     >
                         <View style={styles.headerModal}>
                             <Text style={styles.headerModalText}>Play</Text>

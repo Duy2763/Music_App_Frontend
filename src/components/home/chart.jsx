@@ -8,11 +8,13 @@ import CircleIcon from "../icon/circleIcon";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconAndSoOn from "../icon/iconAndSoOn";
 import SuffleIcon from "../icon/suffleIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RenderListSongs from "./renderListSongs";
 import HeartIconActive from "../icon/heartIconActive";
 import SuffleIconActive from "../icon/suffleIconActive";
 import { StatusBar } from "expo-status-bar";
+import { API_URL } from '@env';
+import { getTopLikedSongs, getTopListenedSongs, getTopSharedSongs } from "../../../api";
 
 
 
@@ -23,13 +25,30 @@ export default function ChartScreen() {
     const [ songCurrent, setSongCurrent ] = useState('');
     const [ isActiveHeart, setActiveHeart ] = useState(false);
     const [ isActiveSuffle, setActiveSuffle ] = useState(false);
-    const arrSongs = [
-        {id: '1', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Image101.png'), plays: 2.1, duaration: '3:36'},
-        {id: '2', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Image102.png'), plays: 2.1, duaration: '3:36'},
-        {id: '3', name: 'In the starts 2', artist: 'Benson Boone 2', hinhAnh: require('../../../assets/home/Image103.png'), plays: 2.1, duaration: '3:36'},
-    ]
+    const [songs, setSongs] = useState([]);
 
-    
+
+    const fetchSongs = async () => {
+        try {
+            let data = null;
+            if (chart === '1') {
+                data = await getTopListenedSongs();
+                setSongs(data);
+            } else if (chart === '2') {
+                data = await getTopLikedSongs();
+                setSongs(data);
+            } else {
+                data = await getTopSharedSongs();
+                setSongs(data);
+            }
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
+
+    useEffect(() => {
+        fetchSongs();
+    }, []);
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -43,7 +62,8 @@ export default function ChartScreen() {
                 </View>
                 <View style={styles.headerContent}>
                     <Image
-                        source={chart.hinhAnh}
+                        source={{uri: `${API_URL}/assets/images/chart/${chart.image}`}}
+                        style={{width: 150, height: 150, borderRadius: 4, marginBottom: 4}}
                     />
                     <View>
                         <Text style={styles.headerContentTitleBig}>{chart.name}</Text>
@@ -73,7 +93,7 @@ export default function ChartScreen() {
                         </View>
                     </View>
                 </View>
-                <RenderListSongs data={arrSongs}/>
+                <RenderListSongs data={songs}/>
             </View>
         </SafeAreaView>
     )
@@ -95,7 +115,7 @@ const styles = StyleSheet.create({
         gap: 8
     },
     headerContentTitleBig: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold'
     },
     headerContentTitleSmall: {

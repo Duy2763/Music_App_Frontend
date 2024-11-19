@@ -2,12 +2,14 @@ import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Animated
 import LeftIcon from "../icon/leftIcon";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import IconAndSoOn from "../icon/iconAndSoOn";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SuffleIcon from "../icon/suffleIcon";
 import SuffleIconActive from "../icon/suffleIconActive";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RenderListSongs from "./renderListSongs";
 import HeartIconActive from "../icon/heartIconActive";
+import { API_URL } from '@env';
+import { getSongsByAlbum } from "../../../api";
 
 export default function AlbumeScreen() {
     const navigation = useNavigation();
@@ -18,6 +20,7 @@ export default function AlbumeScreen() {
     const [isRotating, setIsRotating] = useState(false);
     const rotation = useRef(new Animated.Value(0)).current;
     const [isActiveHeart, setActiveHeart] = useState(false);
+    const [songs, setSongs] = useState([]);
 
     const arrSongs = [
         { id: '1', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Image101.png'), plays: 2.1, duaration: '3:36' },
@@ -29,6 +32,15 @@ export default function AlbumeScreen() {
         { id: '7', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Image101.png'), plays: 2.1, duaration: '3:36' },
         { id: '8', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Image102.png'), plays: 2.1, duaration: '3:36' },
     ];
+
+    const fetchSongs = async () => {
+        try {
+          const data = await getSongsByAlbum(albume._id);
+          setSongs(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
 
     const getDisplayText = (text) => {
         if (isActiveViewMore) {
@@ -74,6 +86,11 @@ export default function AlbumeScreen() {
         outputRange: ['0deg', '360deg'],
     });
 
+
+    useEffect(() => {
+        fetchSongs();
+    }, []);
+    
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content" />
@@ -85,10 +102,10 @@ export default function AlbumeScreen() {
                     <View style={{ alignItems: 'center', gap: 4 }}>
                         <Animated.Image
                             style={[styles.image, { transform: [{ rotate: rotationInterpolate }] }]}
-                            source={albume.hinhAnh}
+                            source={{uri: `${API_URL}/assets/images/album/${albume.image}`}}
                         />
                         <Text style={styles.titleBig}>{albume.name}</Text>
-                        <Text style={styles.titleSmall}>{albume.artist}</Text>
+                        <Text style={styles.titleSmall}>{albume.artist.name}</Text>
                     </View>
                     <View style={styles.headerBottom}>
                         <View style={styles.headerBottomLeft}>
@@ -110,7 +127,7 @@ export default function AlbumeScreen() {
                     </View>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <RenderListSongs data={arrSongs} />
+                    <RenderListSongs data={songs} />
                 </View>
             </View>
         </SafeAreaView>

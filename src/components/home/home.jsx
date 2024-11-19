@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FlatList, ScrollView, StatusBar, StyleSheet } from "react-native"
 import { TouchableOpacity } from "react-native"
 import { TextInput } from "react-native"
@@ -8,76 +8,105 @@ import MiniPlayer from "./miniPlayer"
 import { useNavigation } from "@react-navigation/native"
 import RenderListAlbume from "./renderListAlbume"
 import RenderListArtist from './renderListArtist'
+import { getAllAlbums, getAllArtists, getAllSongs } from "../../../api"
+import { API_URL } from '@env';
 
 
 export default function HomeScreen() {
     const navigation = useNavigation();
     const [songCurrent, setSongCurrent] = useState(null);
-    const arrSongs = [
-        {id: '1', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Container26.png')},
-        {id: '2', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Container27.png')},
-    ]
+    const [songs, setSongs] = useState([]);
+    const [albums, setAlbums] = useState([]); 
+    const [artists, setArtists] = useState([]); 
+
+    const fetchSongs = async () => {
+        try {
+          const data = await getAllSongs();
+          setSongs(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
+
+    const fetchAlbums = async () => {
+        try {
+          const data = await getAllAlbums();
+          setAlbums(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
+
+    const fetchArtists = async () => {
+        try {
+          const data = await getAllArtists();
+          setArtists(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
+
+    useEffect(() => {
+        fetchSongs();
+        fetchAlbums();
+        fetchArtists();
+    }, []);
 
     const arrCharts = [
-        {id: '1', name: 'Top 50 canada', hinhAnh: require('../../../assets/home/Container31.png')},
-        {id: '2', name: 'Top 50 global', hinhAnh: require('../../../assets/home/Container32.png')},
-        {id: '3', name: 'Top 50 trending', hinhAnh: require('../../../assets/home/Container33.png')},
-    ]
-    
-    const arrAlbums = [
-        {id: '1', name: 'ME', artist: 'Jessica Gonzalez', hinhAnh: require('../../../assets/home/Image45.png'), followers: 65.1},
-        {id: '2', name: 'Magna nost', artist: 'Brian Thomas', hinhAnh: require('../../../assets/home/Image46.png'), followers: 63.1},
-        {id: '3', name: 'Meaaa', artist: 'Christopher Jenn', hinhAnh: require('../../../assets/home/Image47.png'), followers: 69.1},
-    ]
-
-    const arrArtists = [
-        {id: '1', name: 'Jennifer Wilson', hinhAnh: require('../../../assets/home/Image39.png'), followers: 65.1, about: {hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' }},
-        {id: '2', name: 'Elizabeth Hall', hinhAnh: require('../../../assets/home/Image40.png'), followers: 63.1, about: {hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' }},
-        {id: '3', name: 'Anthony Martial', hinhAnh: require('../../../assets/home/Image41.png'), followers: 69.1, about: {hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' }},
+        {id: '1', name: 'Top 10 Most Played Songs', image: `topplayed.jpg`},
+        {id: '2', name: 'Top 10 Most Liked Songs', image: `topliked.jpg`},
+        {id: '3', name: 'Top 10 Most Shared Songs', image: `topshared.jpg`},
     ]
 
     const RenderSong = () => {
         return (
-            <FlatList
-                data={arrSongs}
-                keyExtractor={item => item.id}
-                renderItem={({item}) => (
+            <ScrollView 
+                horizontal={true} 
+                showsHorizontalScrollIndicator={false}
+                style={{ flexDirection: 'row' }}
+            >
+                {songs.map((item) => (
                     <TouchableOpacity 
+                        key={`${item._id}`}
                         style={styles.flatItem}
                         onPress={() => setSongCurrent(item)}
                     >
                         <Image
-                            source={item.hinhAnh}
+                            source={{uri: `${API_URL}/assets/images/song/${item.image}`}}
+                            style={{width: 170, height: 250, borderRadius: 8}}
                         />
                     </TouchableOpacity>
-                )}
-                horizontal={true} 
-                showsHorizontalScrollIndicator={false}
-            />
-        )
-    }
-
+                ))}
+            </ScrollView>
+        );
+    };
+    
     const RenderCharts = () => {
         return (
-            <FlatList
-                data={arrCharts}
-                keyExtractor={item => item.id}
-                renderItem={({item}) => (
-                    <TouchableOpacity onPress={() => {navigation.navigate('Chart', {chart: item})}}>
+            <ScrollView 
+                horizontal={true} 
+                showsHorizontalScrollIndicator={false}
+                style={{ flexDirection: 'row' }}
+            >
+                {arrCharts.map((item) => (
+                    <TouchableOpacity 
+                        key={item.id}
+                        onPress={() => navigation.navigate('Chart', { chart: item })}
+                    >
                         <View style={styles.flatItem}>
                             <Image
-                                source={item.hinhAnh}
+                                source={{uri: `${API_URL}/assets/images/chart/${item.image}`}}
+                                style={{width: 150, height: 150, borderRadius: 4, marginBottom: 4}}
                             />
                             <Text style={styles.flatTitleSmall}>Daily chart-toppers</Text>
                             <Text style={styles.flatTitleSmall}>update</Text>
                         </View>
                     </TouchableOpacity>
-                )}
-                horizontal={true} 
-                showsHorizontalScrollIndicator={false}
-            />
-        )
-    }
+                ))}
+            </ScrollView>
+        );
+    };
+    
 
 
 
@@ -128,14 +157,14 @@ export default function HomeScreen() {
                             <Text style={styles.flatTitleBig}>Trending albums</Text>
                             <Text style={styles.flatTitleSmall}>See all</Text>
                         </View>
-                        <RenderListAlbume data={arrAlbums} />
+                        <RenderListAlbume data={albums} />
                     </View>
                     <View>
                         <View style={styles.flatTitle}>
                             <Text style={styles.flatTitleBig}>Popular artists</Text>
                             <Text style={styles.flatTitleSmall}>See all</Text>
                         </View>
-                        <RenderListArtist data={arrArtists} />
+                        <RenderListArtist data={artists} />
                     </View>
                 </ScrollView>
             </View>

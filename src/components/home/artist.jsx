@@ -2,35 +2,56 @@ import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Animated
 import LeftIcon from "../icon/leftIcon";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import IconAndSoOn from "../icon/iconAndSoOn";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SuffleIcon from "../icon/suffleIcon";
 import SuffleIconActive from "../icon/suffleIconActive";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RenderListSongs from "./renderListSongs";
 import RenderListAlbume from "./renderListAlbume";
 import colors from "../../colors";
+import { API_URL } from '@env';
+import { getAlbumsByArtist, getAllAlbums, getSongsByArtist } from "../../../api";
+
 
 export default function ArtistScreen() {
     const navigation = useNavigation();
     const route = useRoute();
     const { artist } = route.params;
+    const [albums, setAlbums] = useState([]);
+    const [albumsByArtist, setAlbumsByArtist] = useState([]);
+    const [songs, setSongs] = useState([]);
     const [isActiveSuffle, setActiveSuffle] = useState(false);
     const [isActiveViewMore, setActiveViewMore] = useState(false);
     const [isRotating, setIsRotating] = useState(false);
     const rotation = useRef(new Animated.Value(0)).current;
     const scale = useRef(new Animated.Value(1)).current;
 
-    const arrSongs = [
-        { id: '1', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Image101.png'), plays: 2.1, duaration: '3:36' },
-        { id: '2', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Image102.png'), plays: 2.1, duaration: '3:36' },
-        { id: '3', name: 'In the starts 2', artist: 'Benson Boone 2', hinhAnh: require('../../../assets/home/Image103.png'), plays: 2.1, duaration: '3:36' },
-    ];
+    const fetchSongs = async () => {
+        try {
+          const data = await getSongsByArtist(artist._id);
+          setSongs(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
 
-    const arrAlbums = [
-        { id: '1', name: 'ME', artist: 'Jessica Gonzalez', hinhAnh: require('../../../assets/home/Image45.png'), followers: 65.1, about: { hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' } },
-        { id: '2', name: 'Magna nost', artist: 'Brian Thomas', hinhAnh: require('../../../assets/home/Image46.png'), followers: 63.1, about: { hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' } },
-        { id: '3', name: 'Meaaa', artist: 'Christopher Jenn', hinhAnh: require('../../../assets/home/Image47.png'), followers: 69.1, about: { hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' } },
-    ];
+    const fetchAlbums = async () => {
+        try {
+          const data = await getAllAlbums();
+          setAlbums(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
+
+    const fetchAlbumsByArtist = async () => {
+        try {
+          const data = await getAlbumsByArtist(artist._id);
+          setAlbumsByArtist(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
 
     const getDisplayText = (text) => {
         if (isActiveViewMore) {
@@ -82,6 +103,12 @@ export default function ArtistScreen() {
         outputRange: ['0deg', '360deg'],
     });
 
+    useEffect(() => {
+        fetchSongs();
+        fetchAlbums();
+        fetchAlbumsByArtist();
+    }, []);
+
     return (
         <SafeAreaView style={{ flex: 1 , backgroundColor: '#fff'}}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content" />
@@ -92,11 +119,16 @@ export default function ArtistScreen() {
                 <View style={styles.container}>
                     <View style={{ alignItems: 'center', gap: 8 }}>
                         <Animated.Image
-                            style={[styles.image, { transform: [{ rotate: rotationInterpolate }, { scale }] }]}
-                            source={artist.hinhAnh}
+                            style={[
+                                styles.image, { transform: [{ rotate: rotationInterpolate }, 
+                                { scale }] }, 
+                                {width: 150, height: 150, borderRadius: '50%'}
+                        ]}
+                            source={{uri: `${API_URL}/assets/images/artist/${artist.image}`}}
+                            
                         />
                         <Text style={styles.titleBig}>{artist.name}</Text>
-                        <Text style={styles.titleSmall}>{artist.followers}K Followers</Text>
+                        <Text style={styles.titleSmall}>{artist.followers} Followers</Text>
                     </View>
                     <View style={styles.headerBottom}>
                         <View style={styles.headerBottomLeft}>
@@ -120,20 +152,21 @@ export default function ArtistScreen() {
                         <Text style={styles.title}>
                             Popular
                         </Text>
-                        <RenderListSongs data={arrSongs} />
+                        <RenderListSongs data={songs} />
                     </View>
                     <View>
                         <Text style={styles.title}>
                             Albums
                         </Text>
-                        <RenderListAlbume data={arrAlbums} />
+                        <RenderListAlbume data={albumsByArtist} />
                     </View>
                     <View>
                         <Text style={styles.title}>
                             About
                         </Text>
                         <Image
-                            source={artist.about.hinhAnh}
+                            source={{uri: `${API_URL}/assets/images/banner/${artist.about.image}`}}
+                            style={{width: '100%', height: 150, borderRadius: 4}}
                         />
                         <Text style={styles.textAbout}>{getDisplayText(artist.about.description)}</Text>
                         <TouchableOpacity>
@@ -153,7 +186,7 @@ export default function ArtistScreen() {
                         <Text style={styles.title}>
                             Fans also like
                         </Text>
-                        <RenderListAlbume data={arrAlbums} />
+                        <RenderListAlbume data={albums} />
                     </View>
                 </View>
             </Animated.ScrollView>
@@ -198,7 +231,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         alignItems: 'center',
         borderColor: 'gray',
-        borderRadius: '50%'
+        borderRadius: 32
     },
     headerBottomRight: {
         flexDirection: 'row',

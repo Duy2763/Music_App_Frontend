@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { API_URL } from '@env';
 
 export default function RenderListAlbume({ data }) {
     const navigation = useNavigation();
@@ -10,15 +11,16 @@ export default function RenderListAlbume({ data }) {
         >
             {data.map(item => (
                 <TouchableOpacity 
-                    key={item.id} 
+                    key={`${item._id}`}
                     onPress={() => { navigation.navigate('Albume', { albume: item }) }}
                 >
                     <View style={styles.flatItem}>
                         <Image
-                            source={item.hinhAnh}
+                            source={{uri: `${API_URL}/assets/images/album/${item.artist.image}`}}
+                            style={{width: 150, height: 150, borderRadius: 4}}
                         />
                         <Text style={[styles.flatTitleSmall, { color: 'black', marginTop: 4 }]}>{item.name}</Text>
-                        <Text style={styles.flatTitleSmall}>{item.artist}</Text>
+                        <Text style={styles.flatTitleSmall}>{item.artist.name}</Text>
                     </View>
                 </TouchableOpacity>
             ))}
