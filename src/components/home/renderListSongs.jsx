@@ -2,15 +2,19 @@ import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity } from "rea
 import CircleIcon from "../icon/circleIcon";
 import IconAndSoOn from "../icon/iconAndSoOn";
 import { API_URL } from '@env';
+import { AppContext } from "../contextAPI/appContext";
+import { useContext } from "react";
 
 export default function RenderListSongs({ data }) {
+    const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong } = useContext(AppContext);
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             {data.map(item => (
                 <TouchableOpacity 
                     key={`${item._id}`}
                     style={styles.flatItem}
-                    onPress={() => setSongCurrent(item)}
+                    onPress={() => setCurrentSong(item)}
                 >
                     <View style={styles.flatContent}>
                         <View style={styles.flatContentLeft}>

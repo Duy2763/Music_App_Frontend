@@ -1,23 +1,26 @@
-
-
 import { Image, ImageBackground, StyleSheet, Text, View } from "react-native"
-import HeartIcon from "../icon/heartIcon"
-import PauseButton from "../icon/pauseIcon"
-import { useState } from "react"
+import HeartIcon from "./components/icon/heartIcon"
+import PauseButton from "./components/icon/pauseIcon"
+import { useContext, useEffect, useState } from "react"
 import { TouchableOpacity } from "react-native";
-import HeartIconActive from "../icon/heartIconActive";
-import PlayButton from "../icon/playIcon";
+import HeartIconActive from "./components/icon/heartIconActive";
+import PlayButton from "./components/icon/playIcon";
 import { Modal } from "react-native";
 import { SafeAreaView } from "react-native";
-import { BlurView } from "expo-blur";
-import DownIcon from "../icon/downIcon";
+import DownIcon from "./components/icon/downIcon";
 import { API_URL } from '@env';
-
+import { AppContext } from "./components/contextAPI/appContext";
 
 export default function MiniPlayer({song}) {
     const [isActiveHeart, setActiveHeart] = useState(false);
     const [isPlaying, setPlaying] = useState(false);
     const [isFullScreen, setFullScreen] = useState(false);
+    const { currentSong, currentTime, setCurrentTime, duration, setDuration } = useContext(AppContext);
+
+
+
+    if (!currentSong) return null;
+
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => setFullScreen(!isFullScreen)}>
@@ -25,11 +28,11 @@ export default function MiniPlayer({song}) {
                     <View style={styles.contentLeft}>
                         <Image
                             style={styles.image}
-                            source={{uri: `${API_URL}/assets/images/song/${song.image}`}}
+                            source={{uri: `${API_URL}/assets/images/song/${currentSong.image}`}}
                         />
                         <View style={styles.contentLeftCenter}>
-                            <Text style={[styles.text, { fontSize: 16}]}>{song.name}</Text>
-                            <Text style={[styles.text, {color: 'gray'}]}>{song.artist.name}</Text>
+                            <Text style={[styles.text, { fontSize: 16}]}>{currentSong.name}</Text>
+                            <Text style={[styles.text, {color: 'gray'}]}>{currentSong.artist.name}</Text>
                         </View>
                     </View>
                     <View style={styles.contentRight}>
@@ -46,7 +49,7 @@ export default function MiniPlayer({song}) {
                 <SafeAreaView style={{flex: 1}}> 
                     <ImageBackground 
                         style={styles.imageBackground}
-                        source={{uri: `${API_URL}/assets/images/song/${song.image}`}}
+                        source={{uri: `${API_URL}/assets/images/song/${currentSong.image}`}}
                     >
                         <View style={styles.headerModal}>
                             <Text style={styles.headerModalText}>Play</Text>
@@ -66,7 +69,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 14
+        padding: 14,
+        position: 'absolute', // Đặt MiniPlayer cố định
+        bottom: 75, // Đẩy MiniPlayer lên trên Navbar (chiều cao Navbar ~75px)
+        width: '100%', // Chiếm toàn bộ chiều ngang màn hình
+        zIndex: 1, // Đảm bảo MiniPlayer ở trên Navbar
     },
     image: {
         width: 50,

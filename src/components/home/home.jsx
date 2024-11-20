@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { FlatList, ScrollView, StatusBar, StyleSheet } from "react-native"
 import { TouchableOpacity } from "react-native"
 import { TextInput } from "react-native"
 import { Image } from "react-native"
 import { SafeAreaView, Text, View } from "react-native"
-import MiniPlayer from "./miniPlayer"
 import { useNavigation } from "@react-navigation/native"
 import RenderListAlbume from "./renderListAlbume"
 import RenderListArtist from './renderListArtist'
 import { getAllAlbums, getAllArtists, getAllSongs } from "../../../api"
 import { API_URL } from '@env';
+import { AppContext } from "../contextAPI/appContext"
 
 
 export default function HomeScreen() {
     const navigation = useNavigation();
-    const [songCurrent, setSongCurrent] = useState(null);
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]); 
     const [artists, setArtists] = useState([]); 
+    const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong } = useContext(AppContext);
 
     const fetchSongs = async () => {
         try {
@@ -69,7 +69,7 @@ export default function HomeScreen() {
                     <TouchableOpacity 
                         key={`${item._id}`}
                         style={styles.flatItem}
-                        onPress={() => setSongCurrent(item)}
+                        onPress={() => setCurrentSong(item)}
                     >
                         <Image
                             source={{uri: `${API_URL}/assets/images/song/${item.image}`}}
@@ -168,7 +168,6 @@ export default function HomeScreen() {
                     </View>
                 </ScrollView>
             </View>
-            {songCurrent && <MiniPlayer song={songCurrent} />}
         </SafeAreaView>
     );
 }
