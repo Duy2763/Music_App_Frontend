@@ -5,6 +5,7 @@ import getTimeDifference from "../../getTimeDifference"
 import HeartIconTemplate from "../icon/heartIconTemplate"
 import feedStyle from "../../styles/feed/feedStyle.js"
 import { useState } from "react"
+import { API_URL } from '@env';
 
 export default function Comments({ comments }) {
     const [likedComments, setLikedComments] = useState({});
@@ -36,7 +37,7 @@ export default function Comments({ comments }) {
                             <View style={feedStyle.commentItemLeftContainer}>
                                 <Image
                                     style={feedStyle.avatarComment}
-                                    source={comment.user.hinhAnh}
+                                    source={{uri: `${API_URL}/assets/images/artist/${comment.user.image}`}}
                                 />
                                 <View style={feedStyle.commentItemLeft}>
                                     <View style={feedStyle.commentItemLeftTop}>
@@ -82,7 +83,7 @@ function Replies({ replies, toggleLikeReply, commentId, likedReplies }) {
                     <View style={feedStyle.commentItemLeftContainer}>
                         <Image
                             style={feedStyle.avatarReply}
-                            source={reply.user.hinhAnh}
+                            source={{uri: `${API_URL}/assets/images/artist/${reply.user.image}`}}
                         />
                         <View style={feedStyle.commentItemLeft}>
                             <View style={feedStyle.commentItemLeftTop}>

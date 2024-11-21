@@ -32,7 +32,8 @@ export default feedStyle = StyleSheet.create({
     },
     feedAvatar: {
         width: 40,
-        height: 40
+        height: 40,
+        borderRadius: 32,
     },
     feedName: {
         flexDirection: 'row',
@@ -146,7 +147,8 @@ export default feedStyle = StyleSheet.create({
     },
     avatarComment: {
         width: 37,
-        height: 37
+        height: 37,
+        borderRadius: 32
     },
     commentItemLeft: {
         gap: 4
@@ -182,7 +184,8 @@ export default feedStyle = StyleSheet.create({
     },
     avatarReply: {
         width: 30,
-        height: 30
+        height: 30,
+        borderRadius: 32
     },
     replyItemLeftTopName: {
         fontWeight: 'bold',

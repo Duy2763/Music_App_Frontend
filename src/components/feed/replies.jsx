@@ -9,12 +9,12 @@ import feedStyle from "../../styles/feed/feedStyle.js"
 const Replies = ({ replies }) => (
     <View>
         {
-            replies.map(reply => (
-                <View style={[feedStyle.commentItem, feedStyle.replyItem]} key={reply.id}>
+            replies.map((reply, index) => (
+                <View style={[feedStyle.commentItem, feedStyle.replyItem]} key={index+""}>
                     <View style={feedStyle.commentItemLeftContainer}>
                         <Image
                             style={feedStyle.avatarReply}
-                            source={reply.user.hinhAnh}
+                            source={{uri: `${API_URL}/assets/images/artist/${reply.user.image}`}}
                         />
                         <View style={feedStyle.commentItemLeft}>
                             <View style={feedStyle.commentItemLeftTop}>
@@ -23,7 +23,7 @@ const Replies = ({ replies }) => (
                             </View>
                             <View style={feedStyle.commentItemLeftBottom}>
                                 <Text style={feedStyle.commentItemLeftBottomName}>{getTimeDifference(reply.timestamp)}</Text>
-                                <Text style={feedStyle.commentItemLeftBottomName}>{reply.likeCounts} like</Text>
+                                <Text style={feedStyle.commentItemLeftBottomName}>{reply.likes} like</Text>
                                 <TouchableOpacity>
                                     <Text style={feedStyle.commentItemLeftBottomName}>Reply</Text>
                                 </TouchableOpacity>
