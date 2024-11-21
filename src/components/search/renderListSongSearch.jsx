@@ -7,11 +7,11 @@ import { useContext } from "react";
 import PlayButtonTemplate from "../icon/playIconTemplate";
 import colors from "../../colors";
 
-export default function RenderListSongs({ data }) {
+export default function RenderListSongSearch({ data }) {
     const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong } = useContext(AppContext);
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <View>
             {data.map(item => (
                 <TouchableOpacity 
                     key={`${item._id}`}
@@ -27,7 +27,7 @@ export default function RenderListSongs({ data }) {
                             <View style={styles.flatContentCenter}>
                                 <Text style={styles.textBig}>{item.name}</Text>
                                 <Text style={styles.textSmall}>{item.artist.name}</Text>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                                     <PlayButtonTemplate color={colors.thirdColor} size={12}/>
                                     <Text style={styles.textSmall}>{item.listens}</Text>
                                     <CircleIcon />
@@ -40,7 +40,7 @@ export default function RenderListSongs({ data }) {
                     </View>
                 </TouchableOpacity>
             ))}
-        </ScrollView>
+        </View>
     );
 }
 
