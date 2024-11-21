@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { Image, ImageBackground, StyleSheet, Text, View, TouchableOpacity, Modal, SafeAreaView } from 'react-native';
+import { Image, ImageBackground, StyleSheet, Text, View, TouchableOpacity, Modal, SafeAreaView, Animated, Easing } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Audio } from 'expo-av';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,6 +10,7 @@ import PauseButton from './components/icon/pauseIcon';
 import DownIcon from './components/icon/downIcon';
 import { API_URL } from '@env';
 import { AppContext } from './components/contextAPI/appContext';
+import colors from './colors';
 
 export default function MiniPlayer({ song }) {
     const [isActiveHeart, setActiveHeart] = useState(false);
@@ -20,6 +21,8 @@ export default function MiniPlayer({ song }) {
     const [duration, setDuration] = useState(0);
     const { currentSong } = useContext(AppContext);
     const intervalId = useRef(null);
+
+    const rotateAnim = useRef(new Animated.Value(0)).current; // Animation state for rotation
 
     useEffect(() => {
         if (currentSong) {
@@ -51,11 +54,33 @@ export default function MiniPlayer({ song }) {
         }
     };
 
+    const startRotation = () => {
+        Animated.loop(
+            Animated.timing(rotateAnim, {
+                toValue: 1,
+                duration: 4000, // Xoay hết 1 vòng trong 4 giây
+                easing: Easing.linear,
+                useNativeDriver: true,
+            })
+        ).start();
+    };
+    
+    const stopRotation = () => {
+        Animated.timing(rotateAnim, {
+            toValue: rotateAnim.__getValue(), // Giữ nguyên giá trị xoay hiện tại
+            duration: 1000, // Dừng chậm trong 1 giây
+            easing: Easing.linear,
+            useNativeDriver: true,
+        }).start();
+    };
+    
     const handlePlayPause = async () => {
         if (isPlaying) {
             await sound.pauseAsync();
+            stopRotation();
         } else {
             await sound.playAsync();
+            startRotation();
         }
         setPlaying(!isPlaying);
     };
@@ -76,6 +101,12 @@ export default function MiniPlayer({ song }) {
             }
         };
     }, [sound]);
+
+    const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
 
     if (!currentSong) return null;
 
@@ -105,28 +136,56 @@ export default function MiniPlayer({ song }) {
                     <SafeAreaView style={styles.modalContainer}>
                         <View style={styles.modalTop}>
                             <View style={styles.headerModal}>
+                                <Text style={styles.headerModalText}>Play</Text>
                                 <TouchableOpacity onPress={() => setFullScreen(false)}>
                                     <DownIcon />
                                 </TouchableOpacity>
-                                <Text style={styles.headerModalText}>Play</Text>
                             </View>
                         </View>
-                        <Image
+                        <Animated.Image
                             source={require('../assets/diathan.png')}
-                            style={{width: 300, height: 300}}
+                            style={[
+                                { width: 300, height: 300 },
+                                {
+                                    transform: [
+                                        {
+                                            rotate: rotateAnim.interpolate({
+                                                inputRange: [0, 1],
+                                                outputRange: ['0deg', '360deg'],
+                                            }),
+                                        },
+                                    ],
+                                },
+                            ]}
                         />
                         <View style={styles.modalBottom}>
                             <View style={styles.songInfo}>
                                 <Text style={styles.songTitle}>{currentSong.name}</Text>
                                 <Text style={styles.artistName}>{currentSong.artist.name}</Text>
                             </View>
-                            <Slider
-                                style={styles.slider}
-                                value={currentTime}
-                                minimumValue={0}
-                                maximumValue={duration}
-                                onValueChange={value => sound.setPositionAsync(value * 1000)}
-                            />
+                            <View style={styles.sliderContainer}>
+                                <View style={styles.timeContainer}>
+                                    <Text style={styles.timeText}>
+                                        {formatTime(currentTime)} {/* Thời gian hiện tại */}
+                                    </Text>
+                                    <Text style={styles.timeText}>
+                                        {formatTime(duration)} {/* Tổng thời gian */}
+                                    </Text>
+                                </View>
+                                <Slider
+                                    style={styles.slider}
+                                    value={currentTime} 
+                                    minimumValue={0}
+                                    maximumValue={duration}
+                                    onValueChange={(value) => setCurrentTime(value)} 
+                                    onSlidingComplete={(value) => sound.setPositionAsync(value * 1000)} 
+                                    minimumTrackTintColor={colors.primaryColor} // Màu thanh đã chạy
+                                    maximumTrackTintColor="#E0E0E0" // Màu thanh chưa chạy
+                                    thumbTintColor={colors.primaryColor} // Màu nút
+                                    thumbStyle={styles.thumbStyle} // Style nút
+                                />
+                            </View>
+
                             <View style={styles.controls}>
                                 <TouchableOpacity>
                                     <Icon name="shuffle" size={30} color="#fff" />
@@ -152,9 +211,10 @@ export default function MiniPlayer({ song }) {
     );
 }
 
+
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'black',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 14,
@@ -196,7 +256,7 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%'
@@ -206,10 +266,11 @@ const styles = StyleSheet.create({
     modalBottom: {
         alignItems: 'center',
         width: '100%',
-        marginBottom: '20%'
+        paddingBottom: '20%',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     headerModal: {
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -217,7 +278,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     headerModalText: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#fff'
     },
     songInfo: {
@@ -225,7 +286,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     songTitle: {
-        fontSize: 18,
+        fontSize: 25,
         color: '#fff',
         fontWeight: 'bold',
     },
@@ -234,7 +295,7 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     slider: {
-        width: '80%',
+        width: '100%',
         height: 40,
     },
     controls: {
@@ -247,5 +308,34 @@ const styles = StyleSheet.create({
     controlIcon: {
         fontSize: 24,
         color: '#fff',
-    }
+    },
+    sliderContainer: {
+        width: '80%',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    timeContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    timeText: {
+        color: '#FFFFFF',
+        fontSize: 12,
+    },
+    slider: {
+        width: '100%',
+        height: 40,
+    },
+    thumbStyle: {
+        width: 25,   // Chiều rộng của thumb
+        height: 10,  // Chiều cao của thumb
+        backgroundColor: '#FF5722', // Màu sắc của thumb
+        borderRadius: 5, // Làm cho thumb có các góc bo tròn, bạn có thể điều chỉnh nếu muốn
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        elevation: 5, // Ánh sáng shadow trên Android
+    },
 });
