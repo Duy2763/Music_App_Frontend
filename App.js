@@ -41,15 +41,22 @@ const LibraryStack = () => (
   </Stack.Navigator>
 )
 
+const SeedStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name='FeedMain' component={FeedScreen} options={{headerShown: false}}/>
+    <Stack.Screen name='Artist' component={ArtistScreen} options={{headerShown: false}}/>
+  </Stack.Navigator>
+)
+
 export default function App() {
   return (
     <AppProvider>
       <View style={{ flex: 1 }}>
         <NavigationContainer>
           <Tab.Navigator tabBar={(props) => <Navbar {...props} />}>
-            {/* <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} /> */}
-            {/* <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} /> */}
-            <Tab.Screen name="Feed" component={FeedScreen} options={{ headerShown: false }} />
+            {/* <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+            <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} /> */}
+            <Tab.Screen name="Feed" component={SeedStack} options={{ headerShown: false }} />
             {/* <Tab.Screen name="Library" component={LibraryStack} options={{ headerShown: false }} /> */}
           </Tab.Navigator>
         </NavigationContainer>
@@ -58,7 +65,6 @@ export default function App() {
     </AppProvider>
   );
 }
-
 
 const styles = StyleSheet.create({
   

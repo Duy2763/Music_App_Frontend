@@ -32,7 +32,7 @@ export default function Comments({ comments }) {
         <ScrollView showsVerticalScrollIndicator={false}>
             {
                 comments.map(comment => (
-                    <View key={comment.id} style={feedStyle.commentContainer}>
+                    <View key={`${comment._id}`} style={feedStyle.commentContainer}>
                         <View style={feedStyle.commentItem}>
                             <View style={feedStyle.commentItemLeftContainer}>
                                 <Image
@@ -79,7 +79,7 @@ function Replies({ replies, toggleLikeReply, commentId, likedReplies }) {
     return (
         <View>
             {replies.map(reply => (
-                <View style={[feedStyle.commentItem, feedStyle.replyItem]} key={reply.id}>
+                <View style={[feedStyle.commentItem, feedStyle.replyItem]} key={`${reply._id}`}>
                     <View style={feedStyle.commentItemLeftContainer}>
                         <Image
                             style={feedStyle.avatarReply}
@@ -112,3 +112,5 @@ function Replies({ replies, toggleLikeReply, commentId, likedReplies }) {
         </View>
     );
 }
+
+

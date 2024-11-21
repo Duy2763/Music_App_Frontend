@@ -5,12 +5,11 @@ import getTimeDifference from "../../getTimeDifference"
 import HeartIconTemplate from "../icon/heartIconTemplate"
 import feedStyle from "../../styles/feed/feedStyle.js"
 
-
 const Replies = ({ replies }) => (
     <View>
         {
             replies.map((reply, index) => (
-                <View style={[feedStyle.commentItem, feedStyle.replyItem]} key={index+""}>
+                <View style={[feedStyle.commentItem, feedStyle.replyItem]} key={reply._id}>
                     <View style={feedStyle.commentItemLeftContainer}>
                         <Image
                             style={feedStyle.avatarReply}
@@ -40,6 +39,5 @@ const Replies = ({ replies }) => (
         }
     </View>
 );
-
 
 export default Replies;
