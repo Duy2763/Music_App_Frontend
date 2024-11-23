@@ -54,6 +54,7 @@ export default function Comments({ comments }) {
                                         <TouchableOpacity>
                                             <TouchableOpacity onPress={() => {
                                                 setCommentIdCurrent(comment._id)
+                                                setCommentIdCurrent(comment._id)
                                                 console.log(commentIdCurrent);
                                                 
                                             }}>

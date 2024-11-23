@@ -45,6 +45,20 @@ export default function Feed() {
         fetchSongs();
     }, []);
 
+    const countCommentsAndReplies = (song) => {
+        let totalComments = 0;
+        let totalReplies = 0;
+      
+        // Duyệt qua tất cả comment trong bài hát
+        song.comments.forEach(comment => {
+          totalComments++; // Tăng số lượng comment
+          totalReplies += comment.replies.length; // Cộng số lượng reply của comment
+        });
+      
+        // Trả về tổng số comment và reply
+        return totalComments + totalReplies;
+    };
+
     const handleAddReply = async (songId, commentIdCurrent) => {
         console.log(commentIdCurrent);
         
@@ -163,7 +177,7 @@ export default function Feed() {
                             <TouchableOpacity onPress={() => toggleModal(song._id)}>
                                 <View style={feedStyle.feedSocialLeftItem}>
                                     <Icon name="comment" size={16} color={colors.thirdColor} />
-                                    <Text style={feedStyle.feedSocialLeftItemCount}>{song.comments.length}</Text>
+                                    <Text style={feedStyle.feedSocialLeftItemCount}>{countCommentsAndReplies(song)}</Text>
                                 </View>
                             </TouchableOpacity>
                             <View style={feedStyle.feedSocialLeftItem}>
@@ -187,7 +201,7 @@ export default function Feed() {
                                 style={styles.modalContent}
                             >
                                 <View style={feedStyle.modalHeader}>
-                                    <Text style={{ fontSize: 18 }}>{song.comments.length} comments</Text>
+                                    <Text style={{ fontSize: 18 }}>{countCommentsAndReplies(song)} comments</Text>
                                     <TouchableOpacity onPress={() => toggleModal(song._id)}>
                                         <DownIconTemplate size={24} color={colors.thirdColor} />
                                     </TouchableOpacity>
