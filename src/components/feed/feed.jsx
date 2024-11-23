@@ -35,17 +35,17 @@ export default function Feed() {
             userImage: 'trinhthangbinh.jpg' // Thay thế bằng ảnh người dùng thực tế
         };
     
-        const commentFormat = {
-            user: {
-                id: comment.userId, // Thay thế bằng ID người dùng thực tế
-                name: comment.userName, // Thay thế bằng tên người dùng thực tế
-                image: comment.userImage // Thay thế bằng ảnh người dùng thực tế
-            },
-            text: input,
-            timestamp: new Date().toISOString(), // Thêm timestamp hiện tại
-            likes: 0, // Hoặc lấy giá trị thích ban đầu (có thể là 0)
-            _id: '673a2a5f420d40f7a0504dzb' // Tạo một _id mới cho reply (hoặc lấy từ backend)
-        };
+        // const commentFormat = {
+        //     user: {
+        //         id: comment.userId, // Thay thế bằng ID người dùng thực tế
+        //         name: comment.userName, // Thay thế bằng tên người dùng thực tế
+        //         image: comment.userImage // Thay thế bằng ảnh người dùng thực tế
+        //     },
+        //     text: input,
+        //     timestamp: new Date().toISOString(), // Thêm timestamp hiện tại
+        //     likes: 0, // Hoặc lấy giá trị thích ban đầu (có thể là 0)
+        //     _id: '673a2a5f420d40f7a0504dzb' // Tạo một _id mới cho reply (hoặc lấy từ backend)
+        // };
     
         try {
             // Thực hiện gọi API để thêm comment vào backend
@@ -98,17 +98,17 @@ export default function Feed() {
         };
        
         
-        const replyFormat = {
-            user: {
-                id: reply.userId, // Thay thế bằng ID người dùng thực tế
-                name: reply.userName, // Thay thế bằng tên người dùng thực tế
-                image: reply.userImage // Thay thế bằng ảnh người dùng thực tế
-            },
-            text: input,
-            timestamp: new Date().toISOString(), // Thêm timestamp hiện tại
-            likes: 0, // Hoặc lấy giá trị thích ban đầu (có thể là 0)
-            _id: '673a2a5f420d40f7a0504dbc' // Tạo một _id mới cho reply (hoặc lấy từ backend)
-        };
+        // const replyFormat = {
+        //     user: {
+        //         id: reply.userId, // Thay thế bằng ID người dùng thực tế
+        //         name: reply.userName, // Thay thế bằng tên người dùng thực tế
+        //         image: reply.userImage // Thay thế bằng ảnh người dùng thực tế
+        //     },
+        //     text: input,
+        //     timestamp: new Date().toISOString(), // Thêm timestamp hiện tại
+        //     likes: 0, // Hoặc lấy giá trị thích ban đầu (có thể là 0)
+        //     _id: '673a2a5f420d40f7a0504dbc' // Tạo một _id mới cho reply (hoặc lấy từ backend)
+        // };
         
         try {
             const data = await addReplyToComment(songId, commentIdCurrent, reply);
@@ -195,7 +195,7 @@ export default function Feed() {
                             <TouchableOpacity onPress={() => toggleModal(song._id)}>
                                 <View style={feedStyle.feedSocialLeftItem}>
                                     <Icon name="comment" size={16} color={colors.thirdColor} />
-                                    {/* <Text style={feedStyle.feedSocialLeftItemCount}>{countCommentsAndReplies(song)}</Text> */}
+                                    <Text style={feedStyle.feedSocialLeftItemCount}>{countCommentsAndReplies(song)}</Text>
                                 </View>
                             </TouchableOpacity>
                             <View style={feedStyle.feedSocialLeftItem}>
@@ -219,7 +219,7 @@ export default function Feed() {
                                 style={styles.modalContent}
                             >
                                 <View style={feedStyle.modalHeader}>
-                                    {/* <Text style={{ fontSize: 18 }}>{countCommentsAndReplies(song)} comments</Text> */}
+                                    <Text style={{ fontSize: 18 }}>{countCommentsAndReplies(song)} comments</Text>
                                     <TouchableOpacity onPress={() => toggleModal(song._id)}>
                                         <DownIconTemplate size={24} color={colors.thirdColor} />
                                     </TouchableOpacity>

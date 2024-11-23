@@ -17,6 +17,7 @@ import WelcomePremium from './src/components/end/welcomePremium.jsx';
 import OptionPremium from './src/components/end/optionPremium.jsx';
 import { AppProvider } from './src/components/contextAPI/appContext.js';
 import MiniPlayer from './src/miniPlayer.jsx';
+import Begin from './src/components/launch/begin.jsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -48,17 +49,23 @@ const SeedStack = () => (
   </Stack.Navigator>
 )
 
+const MainStack = () => (
+  <Tab.Navigator tabBar={(props) => <Navbar {...props} />}>
+    <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+    <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} />
+    <Tab.Screen name="Feed" component={SeedStack} options={{ headerShown: false }} />
+    <Tab.Screen name="Library" component={LibraryStack} options={{ headerShown: false }} />
+  </Tab.Navigator>
+)
+
 export default function App() {
   return (
     <AppProvider>
       <View style={{ flex: 1 }}>
         <NavigationContainer>
-          <Tab.Navigator tabBar={(props) => <Navbar {...props} />}>
-            {/* <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
-            <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} /> */}
-            <Tab.Screen name="Feed" component={SeedStack} options={{ headerShown: false }} />
-            {/* <Tab.Screen name="Library" component={LibraryStack} options={{ headerShown: false }} /> */}
-          </Tab.Navigator>
+          <Stack.Navigator>
+            <Stack.Screen name='Begin' component={Begin} options={{headerShown: false}}/>
+          </Stack.Navigator>
         </NavigationContainer>
         <MiniPlayer/>
       </View>
