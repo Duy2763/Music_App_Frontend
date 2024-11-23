@@ -4,12 +4,15 @@ import colors from "../../colors"
 import getTimeDifference from "../../getTimeDifference"
 import HeartIconTemplate from "../icon/heartIconTemplate"
 import feedStyle from "../../styles/feed/feedStyle.js"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { API_URL } from '@env';
+import { AppContext } from "../contextAPI/appContext.js"
 
 export default function Comments({ comments }) {
     const [likedComments, setLikedComments] = useState({});
     const [likedReplies, setLikedReplies] = useState({});
+    const { setCommentIdCurrent, commentIdCurrent } = useContext(AppContext);
+
 
     const toggleLikeComment = (commentId) => {
         setLikedComments(prevState => ({
@@ -48,7 +51,13 @@ export default function Comments({ comments }) {
                                         <Text style={feedStyle.commentItemLeftBottomName}>{getTimeDifference(comment.timestamp)}</Text>
                                         <Text style={feedStyle.commentItemLeftBottomName}>{comment.likes} like</Text>
                                         <TouchableOpacity>
-                                            <Text style={feedStyle.commentItemLeftBottomName}>Reply</Text>
+                                            <TouchableOpacity onPress={() => {
+                                                setCommentIdCurrent(`${comment._id}`)
+                                                console.log(commentIdCurrent);
+                                                
+                                            }}>
+                                                <Text style={feedStyle.commentItemLeftBottomName}>Reply</Text>
+                                            </TouchableOpacity>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -63,7 +72,7 @@ export default function Comments({ comments }) {
                             </View>
                         </View>
                         <Replies 
-                            replies={comment.replies} 
+                            comment={comment} 
                             toggleLikeReply={toggleLikeReply}
                             commentId={comment.id}
                             likedReplies={likedReplies}
@@ -75,10 +84,10 @@ export default function Comments({ comments }) {
     );
 }
 
-function Replies({ replies, toggleLikeReply, commentId, likedReplies }) {
+function Replies({ comment, toggleLikeReply, commentId, likedReplies }) {
     return (
         <View>
-            {replies.map(reply => (
+            {comment.replies.map(reply => (
                 <View style={[feedStyle.commentItem, feedStyle.replyItem]} key={`${reply._id}`}>
                     <View style={feedStyle.commentItemLeftContainer}>
                         <Image
@@ -88,11 +97,13 @@ function Replies({ replies, toggleLikeReply, commentId, likedReplies }) {
                         <View style={feedStyle.commentItemLeft}>
                             <View style={feedStyle.commentItemLeftTop}>
                                 <Text style={feedStyle.replyItemLeftTopName}>{reply.user.name}</Text>
+                                <Text style={{fontSize: 13, color: 'blue'}}>@{comment.user.name}</Text>
                                 <Text style={feedStyle.replyItemLeftTopComment}>{reply.text}</Text>
                             </View>
                             <View style={feedStyle.commentItemLeftBottom}>
                                 <Text style={feedStyle.commentItemLeftBottomName}>{getTimeDifference(reply.timestamp)}</Text>
                                 <Text style={feedStyle.commentItemLeftBottomName}>{reply.likes} like</Text>
+                                
                                 <TouchableOpacity>
                                     <Text style={feedStyle.commentItemLeftBottomName}>Reply</Text>
                                 </TouchableOpacity>

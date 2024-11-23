@@ -10,7 +10,6 @@ import { useEffect, useState } from "react"
 
 
 export default function FeedScreen() {
-    const [songs, setSongs] = useState([]);
     // const arrArtists = [
     //     {id: '1', name: 'Jennifer Wilson', hinhAnh: require('../../../assets/home/Image39.png'), followers: 65.1, about: {hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' }},
     //     {id: '2', name: 'Elizabeth Hall', hinhAnh: require('../../../assets/home/Image40.png'), followers: 63.1, about: {hinhAnh: require('../../../assets/home/Image73.png'), description: 'Do in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor in cupidatat aute et in offcia aute laboris est Lorem est nisi dolor' }},
@@ -22,18 +21,6 @@ export default function FeedScreen() {
     //     {id: '2', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Container27.png')},
     // ]
 
-    const fetchSongs = async () => {
-        try {
-          const data = await getAllSongs();
-          setSongs(data);
-        } catch (error) {
-          console.error('Error fetching songs:', error);
-        } 
-    };
-
-    useEffect(() => {
-        fetchSongs();
-    }, []);
 
    
     return (
@@ -44,7 +31,7 @@ export default function FeedScreen() {
                     <Text style={feedStyle.headerTopText}>Feed</Text>
                     <CastIcon/>
                 </View>
-                <Feed data={songs}/>
+                <Feed/>
             </View>
         </SafeAreaView>
     )

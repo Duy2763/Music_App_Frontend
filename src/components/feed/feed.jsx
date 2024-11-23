@@ -15,14 +15,51 @@ import Comment from "./comment";
 import feedStyle from "../../styles/feed/feedStyle.js";
 import { API_URL } from '@env';
 import { AppContext } from "../contextAPI/appContext.js";
+import { Audio } from "expo-av";
+import getTimeDifference from "../../getTimeDifference.js";
+import { addReplyToComment, getAllSongs } from "../../../api.js";
 
 const { height } = Dimensions.get('window');
 
-export default function Feed({ data }) {
+export default function Feed() {
     const [input, setInput] = useState('');
     const [openComments, setOpenComments] = useState(null);
     const [likedPosts, setLikedPosts] = useState({});
-    const { setCurrentSong } = useContext(AppContext);
+    const { setCurrentSong, commentIdCurrent } = useContext(AppContext);
+    const [songs, setSongs] = useState([]);
+
+
+    const fetchSongs = async () => {
+        try {
+          const data = await getAllSongs();
+          setSongs(data);
+        } catch (error) {
+          console.error('Error fetching songs:', error);
+        } 
+    };
+
+    useEffect(() => {
+        fetchSongs();
+    }, []);
+
+    const handleAddReply = async (songId, commentIdCurrent) => {
+        console.log(commentIdCurrent);
+        
+        const reply = {
+          text: input,
+          userId: '673a2a5f420d40f7a0504dbc', // Thay thế bằng ID người dùng thực tế
+          userName: 'Trần Vũ Duy', // Thay thế bằng tên người dùng thực tế
+          userImage: 'trinhthangbinh.jpg' // Thay thế bằng ảnh người dùng thực tế
+        };
+        console.log(reply);
+        
+        try {
+          const data = await addReplyToComment(songId, commentIdCurrent, reply);
+          setInput('');
+        } catch (error) {
+          console.error('Error adding reply:', error);
+        }
+      };
 
     const toggleModal = (id) => {
         setOpenComments((prev) => (prev === id ? null : id));
@@ -36,8 +73,8 @@ export default function Feed({ data }) {
     };
 
     return (
-        <ScrollView>
-            {data.map(song => (
+        <ScrollView showsVerticalScrollIndicator={false}>
+            {songs.map(song => (
                 <View key={song._id} style={feedStyle.feedContainer}>
                     {/* Feed content */}
                     <View style={feedStyle.feedTitle}>
@@ -53,6 +90,7 @@ export default function Feed({ data }) {
                             <View style={feedStyle.feedTime}>
                                 <Text style={feedStyle.feedTimeText}>Posted a track</Text>
                                 <CircleIcon />
+                                <Text style={feedStyle.feedTimeText}>{getTimeDifference(song.timestamp)}</Text>
                             </View>
                         </View>
                     </View>
@@ -73,7 +111,7 @@ export default function Feed({ data }) {
                                         </View>
                                         <Text style={feedStyle.feedimageBackgroundTitleSmall}>{song.listens}</Text>
                                             <CircleIconTemplate size={7} color={colors.secondaryColor}/> 
-                                        <Text style={feedStyle.feedimageBackgroundTitleSmall}>{song.duration}</Text>
+                                        <Text style={feedStyle.feedimageBackgroundTitleSmall}>4:10</Text>
                                     </View>
                                 </View>
                             </View>
@@ -121,7 +159,7 @@ export default function Feed({ data }) {
                                         <DownIconTemplate size={24} color={colors.thirdColor} />
                                     </TouchableOpacity>
                                 </View>
-                                <Comment comments={song.comments} />
+                                <Comment comments={song.comments}/>
                                 <View style={styles.inputInputImage}>
                                     <Image
                                         style={styles.image}
@@ -133,11 +171,16 @@ export default function Feed({ data }) {
                                             placeholder="Write a comment..."
                                             placeholderTextColor={colors.thirdColor}
                                             onChangeText={text => setInput(text)}
+                                            value={input}
                                         />
                                         <Icon name="smile-o" size={25} color={colors.thirdColor}/>
                                     </View>
                                     {
-                                        input.length > 0 && <Icon name="send" size={24} color={colors.primaryColor} />
+                                        input.length > 0 && 
+                                        <TouchableOpacity onPress={() => handleAddReply(song._id ,commentIdCurrent)}>
+                                            <Icon name="send" size={24} color={colors.primaryColor} />
+                                        </TouchableOpacity>
+                                        
                                     }
                                 </View>
                             </KeyboardAvoidingView>

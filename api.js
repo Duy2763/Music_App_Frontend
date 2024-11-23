@@ -165,3 +165,24 @@ export const getAlbumsByArtist = async (artistId) => {
     throw error;
   }
 };
+
+// Hàm để thêm reply vào comment
+export const addReplyToComment = async (songId, commentId, reply) => {
+  try {
+    const response = await fetch(`${API_URL}/songs/${songId}/comments/${commentId}/replies`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reply),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error adding reply:', error);
+    throw error;
+  }
+};
