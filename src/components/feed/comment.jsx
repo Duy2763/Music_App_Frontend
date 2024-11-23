@@ -12,7 +12,7 @@ import { getAllSongs } from "../../../api.js"
 export default function Comments({ comments }) {
     const [likedComments, setLikedComments] = useState({});
     const [likedReplies, setLikedReplies] = useState({});
-    const { setCommentIdCurrent, commentIdCurrent } = useContext(AppContext);
+    const { setCommentIdCurrent, commentIdCurrent, optionAddComment, setOptionAddComment } = useContext(AppContext);
    
 
     const toggleLikeComment = (commentId) => {
@@ -32,6 +32,7 @@ export default function Comments({ comments }) {
         }));
     };
 
+    if (!comments) return;
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             {
@@ -55,6 +56,9 @@ export default function Comments({ comments }) {
                                             <TouchableOpacity onPress={() => {
                                                 setCommentIdCurrent(comment._id)
                                                 setCommentIdCurrent(comment._id)
+                                                setOptionAddComment('add-reply')
+                                                setOptionAddComment('add-reply')
+                                                console.log(optionAddComment);
                                                 console.log(commentIdCurrent);
                                                 
                                             }}>
@@ -87,6 +91,7 @@ export default function Comments({ comments }) {
 }
 
 function Replies({ comment, toggleLikeReply, commentId, likedReplies }) {
+    if (!comment.replies) return;
     return (
         <View>
             {comment.replies.map(reply => (

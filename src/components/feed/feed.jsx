@@ -17,7 +17,7 @@ import { API_URL } from '@env';
 import { AppContext } from "../contextAPI/appContext.js";
 import { Audio } from "expo-av";
 import getTimeDifference from "../../getTimeDifference.js";
-import { addReplyToComment, getAllSongs } from "../../../api.js";
+import { addCommentToSong, addReplyToComment, getAllSongs } from "../../../api.js";
 
 const { height } = Dimensions.get('window');
 
@@ -25,12 +25,40 @@ export default function Feed() {
     const [input, setInput] = useState('');
     const [openComments, setOpenComments] = useState(null);
     const [likedPosts, setLikedPosts] = useState({});
-    const { setCurrentSong, commentIdCurrent } = useContext(AppContext);
-    const [songs, setSongs] = useState([]);
-    const [commentCurrent, setCommentCurrent] = useState([]);
+    const { setCurrentSong, commentIdCurrent, optionAddComment, setOptionAddComment, songs,  setSongs} = useContext(AppContext);
     
-
-   
+    const handleAddComment = async (songId) => {
+        const comment = {
+            text: input,
+            userId: '673a2a5f420d40f7a0504dbc', // Thay thế bằng ID người dùng thực tế
+            userName: 'Nguyen Van A', // Thay thế bằng tên người dùng thực tế
+            userImage: 'trinhthangbinh.jpg' // Thay thế bằng ảnh người dùng thực tế
+        };
+    
+        const commentFormat = {
+            user: {
+                id: comment.userId, // Thay thế bằng ID người dùng thực tế
+                name: comment.userName, // Thay thế bằng tên người dùng thực tế
+                image: comment.userImage // Thay thế bằng ảnh người dùng thực tế
+            },
+            text: input,
+            timestamp: new Date().toISOString(), // Thêm timestamp hiện tại
+            likes: 0, // Hoặc lấy giá trị thích ban đầu (có thể là 0)
+            _id: '673a2a5f420d40f7a0504dzb' // Tạo một _id mới cho reply (hoặc lấy từ backend)
+        };
+    
+        try {
+            // Thực hiện gọi API để thêm comment vào backend
+            await addCommentToSong(songId, comment);
+            fetchSongs();
+            
+            // Đặt lại input và thay đổi trạng thái liên quan
+            setOptionAddComment('add-comment');
+            setInput('');
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
+    };
 
     const fetchSongs = async () => {
         try {
@@ -48,13 +76,13 @@ export default function Feed() {
     const countCommentsAndReplies = (song) => {
         let totalComments = 0;
         let totalReplies = 0;
-      
+    
         // Duyệt qua tất cả comment trong bài hát
         song.comments.forEach(comment => {
-          totalComments++; // Tăng số lượng comment
-          totalReplies += comment.replies.length; // Cộng số lượng reply của comment
+            totalComments++; // Tăng số lượng comment
+            totalReplies += (comment.replies?.length || 0); // Kiểm tra replies trước khi lấy length
         });
-      
+    
         // Trả về tổng số comment và reply
         return totalComments + totalReplies;
     };
@@ -84,32 +112,22 @@ export default function Feed() {
         
         try {
             const data = await addReplyToComment(songId, commentIdCurrent, reply);
-            setSongs(prevSongs => 
-                prevSongs.map(song => 
-                    song._id === songId 
-                        ? {
-                            ...song,
-                            comments: song.comments.map(comment =>
-                                comment._id === commentIdCurrent
-                                    ? {
-                                        ...comment,
-                                        replies: [...comment.replies, replyFormat]  // Thêm reply vào comment
-                                      }
-                                    : comment
-                            )
-                        }
-                        : song
-                )
-            );
-              
+            fetchSongs();
+            setOptionAddComment('add-comment');  
             setInput('');
         } catch (error) {
           console.error('Error adding reply:', error);
         }
       };
 
-    const toggleModal = (id) => {
-        setOpenComments((prev) => (prev === id ? null : id));
+      const toggleModal = (id) => {
+        setOpenComments((prev) => {
+            const newState = prev === id ? null : id;
+            if (newState === id) {
+                setInput(''); // reset input khi mở modal
+            }
+            return newState;
+        });
     };
 
     const toggleLike = (id) => {
@@ -177,7 +195,7 @@ export default function Feed() {
                             <TouchableOpacity onPress={() => toggleModal(song._id)}>
                                 <View style={feedStyle.feedSocialLeftItem}>
                                     <Icon name="comment" size={16} color={colors.thirdColor} />
-                                    <Text style={feedStyle.feedSocialLeftItemCount}>{countCommentsAndReplies(song)}</Text>
+                                    {/* <Text style={feedStyle.feedSocialLeftItemCount}>{countCommentsAndReplies(song)}</Text> */}
                                 </View>
                             </TouchableOpacity>
                             <View style={feedStyle.feedSocialLeftItem}>
@@ -201,12 +219,12 @@ export default function Feed() {
                                 style={styles.modalContent}
                             >
                                 <View style={feedStyle.modalHeader}>
-                                    <Text style={{ fontSize: 18 }}>{countCommentsAndReplies(song)} comments</Text>
+                                    {/* <Text style={{ fontSize: 18 }}>{countCommentsAndReplies(song)} comments</Text> */}
                                     <TouchableOpacity onPress={() => toggleModal(song._id)}>
                                         <DownIconTemplate size={24} color={colors.thirdColor} />
                                     </TouchableOpacity>
                                 </View>
-                                <Comment comments={song.comments}/>
+                                <Comment comments={song.comments || []} />
                                 <View style={styles.inputInputImage}>
                                     <Image
                                         style={styles.image}
@@ -224,7 +242,12 @@ export default function Feed() {
                                     </View>
                                     {
                                         input.length > 0 && 
-                                        <TouchableOpacity onPress={() => handleAddReply(song._id ,commentIdCurrent)}>
+                                        <TouchableOpacity onPress={() => {
+                                            optionAddComment === "add-comment" 
+                                            ? handleAddComment(song._id)
+                                            : handleAddReply(song._id ,commentIdCurrent)
+                                        
+                                        }}>
                                             <Icon name="send" size={24} color={colors.primaryColor} />
                                         </TouchableOpacity>
                                         
