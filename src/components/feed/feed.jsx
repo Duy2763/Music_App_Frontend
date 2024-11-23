@@ -27,7 +27,10 @@ export default function Feed() {
     const [likedPosts, setLikedPosts] = useState({});
     const { setCurrentSong, commentIdCurrent } = useContext(AppContext);
     const [songs, setSongs] = useState([]);
+    const [commentCurrent, setCommentCurrent] = useState([]);
+    
 
+   
 
     const fetchSongs = async () => {
         try {
@@ -51,11 +54,41 @@ export default function Feed() {
           userName: 'Trần Vũ Duy', // Thay thế bằng tên người dùng thực tế
           userImage: 'trinhthangbinh.jpg' // Thay thế bằng ảnh người dùng thực tế
         };
-        console.log(reply);
+       
+        
+        const replyFormat = {
+            user: {
+                id: reply.userId, // Thay thế bằng ID người dùng thực tế
+                name: reply.userName, // Thay thế bằng tên người dùng thực tế
+                image: reply.userImage // Thay thế bằng ảnh người dùng thực tế
+            },
+            text: input,
+            timestamp: new Date().toISOString(), // Thêm timestamp hiện tại
+            likes: 0, // Hoặc lấy giá trị thích ban đầu (có thể là 0)
+            _id: '673a2a5f420d40f7a0504dbc' // Tạo một _id mới cho reply (hoặc lấy từ backend)
+        };
         
         try {
-          const data = await addReplyToComment(songId, commentIdCurrent, reply);
-          setInput('');
+            const data = await addReplyToComment(songId, commentIdCurrent, reply);
+            setSongs(prevSongs => 
+                prevSongs.map(song => 
+                    song._id === songId 
+                        ? {
+                            ...song,
+                            comments: song.comments.map(comment =>
+                                comment._id === commentIdCurrent
+                                    ? {
+                                        ...comment,
+                                        replies: [...comment.replies, replyFormat]  // Thêm reply vào comment
+                                      }
+                                    : comment
+                            )
+                        }
+                        : song
+                )
+            );
+              
+            setInput('');
         } catch (error) {
           console.error('Error adding reply:', error);
         }
