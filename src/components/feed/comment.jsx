@@ -46,7 +46,7 @@ export default function Comments({ comments }) {
                                     </View>
                                     <View style={feedStyle.commentItemLeftBottom}>
                                         <Text style={feedStyle.commentItemLeftBottomName}>{getTimeDifference(comment.timestamp)}</Text>
-                                        <Text style={feedStyle.commentItemLeftBottomName}>{comment.likeCounts} like</Text>
+                                        <Text style={feedStyle.commentItemLeftBottomName}>{comment.likes} like</Text>
                                         <TouchableOpacity>
                                             <Text style={feedStyle.commentItemLeftBottomName}>Reply</Text>
                                         </TouchableOpacity>
@@ -92,7 +92,7 @@ function Replies({ replies, toggleLikeReply, commentId, likedReplies }) {
                             </View>
                             <View style={feedStyle.commentItemLeftBottom}>
                                 <Text style={feedStyle.commentItemLeftBottomName}>{getTimeDifference(reply.timestamp)}</Text>
-                                <Text style={feedStyle.commentItemLeftBottomName}>{reply.likeCounts} like</Text>
+                                <Text style={feedStyle.commentItemLeftBottomName}>{reply.likes} like</Text>
                                 <TouchableOpacity>
                                     <Text style={feedStyle.commentItemLeftBottomName}>Reply</Text>
                                 </TouchableOpacity>
