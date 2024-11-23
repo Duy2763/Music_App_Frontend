@@ -136,7 +136,7 @@ export default feedStyle = StyleSheet.create({
     modalHeader: {
         flexDirection: 'row',
         alignItems: 'center', 
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     commentContainer: {
         marginTop: 24
