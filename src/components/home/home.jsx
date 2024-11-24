@@ -7,7 +7,7 @@ import { SafeAreaView, Text, View } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import RenderListAlbume from "./renderListAlbume"
 import RenderListArtist from './renderListArtist'
-import { getAllAlbums, getAllArtists, getAllSongs } from "../../../api"
+import { getAllAlbums, getAllArtists, getAllSongs, getFirstThreeSongs } from "../../../api"
 import { API_URL } from '@env';
 import { AppContext } from "../contextAPI/appContext"
 
@@ -17,7 +17,7 @@ export default function HomeScreen() {
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]); 
     const [artists, setArtists] = useState([]); 
-    const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong, userCurrent } = useContext(AppContext);
+    const { currentSong, setCurrentSong, userCurrent, playlist, setPlaylist, currentIndex, playNextSong } = useContext(AppContext);
     
     useEffect(() => {
         if (userCurrent) {
@@ -27,9 +27,8 @@ export default function HomeScreen() {
 
     const fetchSongs = async () => {
         try {
-          const data = await getAllSongs();
+          const data = await getFirstThreeSongs();
           setSongs(data);
-          console.log(userCurrent);
         } catch (error) {
           console.error('Error fetching songs:', error);
         } 
@@ -77,7 +76,12 @@ export default function HomeScreen() {
                     <TouchableOpacity 
                         key={`${item._id}`}
                         style={styles.flatItem}
-                        onPress={() => setCurrentSong(item)}
+                        onPress={() => {
+                            setCurrentSong(item);
+                            console.log(songs);
+                            
+                            setPlaylist(songs)
+                        }}
                     >
                         <Image
                             source={{uri: `${API_URL}/assets/images/song/${item.image}`}}
@@ -130,14 +134,14 @@ export default function HomeScreen() {
                     />
                     <View style={styles.headerRight}>
                         <Image
-                            source={{uri: `${API_URL}/assets/images/artist/${userCurrent.image}`}}
+                            // source={{uri: `${API_URL}/assets/images/artist/${userCurrent.image}`}}
                             style={{width: 40, height: 40, borderRadius: 32}}
                         />
                     </View>
                 </View>
                 <View style={{ marginVertical: 24 }}>
                     <Text style={{ color: 'darkgray', fontSize: 16, marginBottom: 4 }}>Good morning,</Text>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>{userCurrent.name}</Text>
+                    {/* <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>{userCurrent.name}</Text> */}
                     <View style={styles.search}>
                         <Image
                             style={styles.searchIcon}

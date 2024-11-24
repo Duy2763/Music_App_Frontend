@@ -8,13 +8,14 @@ import CircleIcon from "../icon/circleIcon";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconAndSoOn from "../icon/iconAndSoOn";
 import SuffleIcon from "../icon/suffleIcon";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import RenderListSongs from "./renderListSongs";
 import HeartIconActive from "../icon/heartIconActive";
 import SuffleIconActive from "../icon/suffleIconActive";
 import { StatusBar } from "expo-status-bar";
 import { API_URL } from '@env';
 import { getTopLikedSongs, getTopListenedSongs, getTopSharedSongs } from "../../../api";
+import { AppContext } from "../contextAPI/appContext";
 
 
 
@@ -22,27 +23,25 @@ export default function ChartScreen() {
     const route = useRoute();
     const navigation = useNavigation();
     const { chart } = route.params;
-    const [ songCurrent, setSongCurrent ] = useState('');
-    const [ isActiveHeart, setActiveHeart ] = useState(false);
-    const [ isActiveSuffle, setActiveSuffle ] = useState(false);
+    const [isActiveHeart, setActiveHeart] = useState(false);
+    const [isActiveSuffle, setActiveSuffle] = useState(false);
     const [songs, setSongs] = useState([]);
-
+    const [isPlaying, setPlaying] = useState(false);
+    const { setPlaylist, setCurrentSong, currentSong } = useContext(AppContext);
 
     const fetchSongs = async () => {
         try {
             let data = null;
             if (chart === '1') {
                 data = await getTopListenedSongs();
-                setSongs(data);
             } else if (chart === '2') {
                 data = await getTopLikedSongs();
-                setSongs(data);
             } else {
                 data = await getTopSharedSongs();
-                setSongs(data);
             }
+            setSongs(data);
         } catch (error) {
-          console.error('Error fetching songs:', error);
+            console.error('Error fetching songs:', error);
         } 
     };
 
@@ -50,53 +49,72 @@ export default function ChartScreen() {
         fetchSongs();
     }, []);
 
+    const handlePlayTop10 = () => {
+        setPlaylist(songs);
+        setCurrentSong(songs[0]);
+        setPlaying(true);
+    };
+
+    const handlePlayPause = () => {
+        if (isPlaying) {
+            // Dừng phát nhạc
+            setPlaying(false);
+        } else {
+            // Phát nhạc
+            if (currentSong) {
+                setPlaying(true);
+            } else {
+                handlePlayTop10();
+            }
+        }
+    };
+
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{ flex: 1 }}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content" />
             <View style={styles.container}>
                 <View style={styles.headerTop}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <LeftIcon/>
+                        <LeftIcon />
                     </TouchableOpacity>
-                    <CastIcon/>
+                    <CastIcon />
                 </View>
                 <View style={styles.headerContent}>
                     <Image
-                        source={{uri: `${API_URL}/assets/images/chart/${chart.image}`}}
-                        style={{width: 150, height: 150, borderRadius: 4, marginBottom: 4}}
+                        source={{ uri: `${API_URL}/assets/images/chart/${chart.image}` }}
+                        style={{ width: 150, height: 150, borderRadius: 4, marginBottom: 4 }}
                     />
                     <View>
                         <Text style={styles.headerContentTitleBig}>{chart.name}</Text>
-                        <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-                            <HeartIconSmall/>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                            <HeartIconSmall />
                             <Text style={styles.headerContentTitleSmall}>1,234</Text>
-                            <CircleIcon/>
+                            <CircleIcon />
                             <Text style={styles.headerContentTitleSmall}>05:10:18</Text>
                         </View>
                         <Text style={styles.headerContentTitleSmall}>Daily chart-toppers update</Text>
                     </View>
                 </View>
                 <View style={styles.headerBottom}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 32}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 32 }}>
                         <TouchableOpacity onPress={() => setActiveHeart(!isActiveHeart)}>
-                            {isActiveHeart ?  <HeartIconActive/> : <Icon name="heart" size={25} color="gray" />}
+                            {isActiveHeart ? <HeartIconActive /> : <Icon name="heart" size={25} color="gray" />}
                         </TouchableOpacity>
-                        <IconAndSoOn/>
+                        <IconAndSoOn />
                     </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 32}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 32 }}>
                         <TouchableOpacity onPress={() => setActiveSuffle(!isActiveSuffle)}>
-                            {isActiveSuffle ?  <SuffleIconActive/> : <SuffleIcon/>}
+                            {isActiveSuffle ? <SuffleIconActive /> : <SuffleIcon />}
                         </TouchableOpacity>
-                        
-                        <View style={styles.playButton}>
-                            <Icon name="play" size={25} color="#fff" />
-                        </View>
+                        <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
+                            {isPlaying ? <Icon name="pause" size={25} color="#fff" /> : <Icon name="play" size={25} color="#fff" />}
+                        </TouchableOpacity>
                     </View>
                 </View>
-                <RenderListSongs data={songs}/>
+                <RenderListSongs data={songs} />
             </View>
         </SafeAreaView>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -131,8 +149,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 14,
-        paddingHorizontal: 17,
-        borderRadius: '50%'
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        borderRadius: 32
     }
 })

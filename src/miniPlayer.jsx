@@ -19,7 +19,7 @@ export default function MiniPlayer({ song }) {
     const [sound, setSound] = useState(null);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const { currentSong } = useContext(AppContext);
+    const { currentSong, setCurrentSong, userCurrent, playlist, setPlaylist, currentIndex, playNextSong } = useContext(AppContext);
     const intervalId = useRef(null);
 
     const rotateAnim = useRef(new Animated.Value(0)).current; // Animation state for rotation
@@ -49,8 +49,18 @@ export default function MiniPlayer({ song }) {
             const status = await sound.getStatusAsync();
             console.log('Sound status:', status); 
             setDuration(status.durationMillis / 1000);
+            sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+            if (isPlaying) {
+                await sound.playAsync();
+            }
         } catch (error) {
             console.error('Error loading sound:', error); 
+        }
+    };
+
+    const onPlaybackStatusUpdate = (status) => {
+        if (status.didJustFinish) {
+            playNextSong();
         }
     };
 
