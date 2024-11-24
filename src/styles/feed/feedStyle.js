@@ -9,7 +9,7 @@ export default feedStyle = StyleSheet.create({
     container: {
         backgroundColor: colors.secondaryColor,
         paddingHorizontal: 24,
-        marginBottom: 32
+        marginBottom: 32,
     },
     headerTop: {
         flexDirection: 'row',

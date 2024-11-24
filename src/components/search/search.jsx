@@ -107,7 +107,7 @@ export default function SearchScreen() {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: colors.secondaryColor}}>
-            <View style={styles.container}>
+            <View style={[styles.container, {marginBottom: currentSong ? 83 : 0}]}>
                 <View style={[styles.input, isFocused && styles.inputFocused, styles.search]}>
                     <View style={{flexDirection: 'row'}}>
                         <Image
@@ -149,7 +149,7 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 16,
-        backgroundColor: colors.secondaryColor
+        backgroundColor: colors.secondaryColor,
     },
     search: {
         flexDirection: 'row',

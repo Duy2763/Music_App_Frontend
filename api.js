@@ -207,3 +207,69 @@ export const addCommentToSong = async (songId, comment) => {
     throw error;
   }
 };
+
+// Hàm để lấy tất cả người dùng
+export const getAllUsers = async () => {
+  try {
+    const response = await fetch(`${API_URL}/users`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
+};
+
+// Hàm để lấy thông tin người dùng theo ID
+export const getUserById = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/user/${userId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching user by ID:', error);
+    throw error;
+  }
+};
+
+// Hàm để tạo người dùng mới
+export const createUser = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+};
+
+// Hàm để lấy thông tin người dùng theo tên và mật khẩu
+export const getUserByNameAndPassword = async (name, password) => {
+  try {
+    const response = await fetch(`${API_URL}/getUserByNameAndPassword?name=${name}&password=${password}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching user by name and password:', error);
+    throw error;
+  }
+};

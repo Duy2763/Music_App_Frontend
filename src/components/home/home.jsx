@@ -17,12 +17,19 @@ export default function HomeScreen() {
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]); 
     const [artists, setArtists] = useState([]); 
-    const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong } = useContext(AppContext);
+    const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong, userCurrent } = useContext(AppContext);
+    
+    useEffect(() => {
+        if (userCurrent) {
+          console.log('User current:', userCurrent); // Log userCurrent để kiểm tra
+        }
+    }, [userCurrent]);
 
     const fetchSongs = async () => {
         try {
           const data = await getAllSongs();
           setSongs(data);
+          console.log(userCurrent);
         } catch (error) {
           console.error('Error fetching songs:', error);
         } 
@@ -47,6 +54,7 @@ export default function HomeScreen() {
     };
 
     useEffect(() => {
+       
         fetchSongs();
         fetchAlbums();
         fetchArtists();
@@ -114,7 +122,7 @@ export default function HomeScreen() {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content" />
-            <View style={styles.container}>
+            <View style={[styles.container, {marginBottom: currentSong ? 78 : 0}]}>
                 {/* Header */}
                 <View style={styles.header}>
                     <Image
@@ -122,13 +130,14 @@ export default function HomeScreen() {
                     />
                     <View style={styles.headerRight}>
                         <Image
-                            source={require('../../../assets/home/Avatar3.png')}
+                            source={{uri: `${API_URL}/assets/images/artist/${userCurrent.image}`}}
+                            style={{width: 40, height: 40, borderRadius: 32}}
                         />
                     </View>
                 </View>
                 <View style={{ marginVertical: 24 }}>
                     <Text style={{ color: 'darkgray', fontSize: 16, marginBottom: 4 }}>Good morning,</Text>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>Ashley Scott</Text>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>{userCurrent.name}</Text>
                     <View style={styles.search}>
                         <Image
                             style={styles.searchIcon}
@@ -176,7 +185,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 16,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',

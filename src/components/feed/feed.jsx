@@ -18,21 +18,22 @@ import { AppContext } from "../contextAPI/appContext.js";
 import { Audio } from "expo-av";
 import getTimeDifference from "../../getTimeDifference.js";
 import { addCommentToSong, addReplyToComment, getAllSongs } from "../../../api.js";
+import { useNavigation } from "@react-navigation/native";
 
 const { height } = Dimensions.get('window');
 
 export default function Feed() {
+    const navigation = useNavigation();
     const [input, setInput] = useState('');
     const [openComments, setOpenComments] = useState(null);
     const [likedPosts, setLikedPosts] = useState({});
-    const { setCurrentSong, commentIdCurrent, optionAddComment, setOptionAddComment, songs,  setSongs} = useContext(AppContext);
-    
+    const { setCurrentSong, commentIdCurrent, optionAddComment, setOptionAddComment, songs,  setSongs, userCurrent} = useContext(AppContext);
     const handleAddComment = async (songId) => {
         const comment = {
             text: input,
-            userId: '673a2a5f420d40f7a0504dbc', // Thay thế bằng ID người dùng thực tế
-            userName: 'Nguyen Van A', // Thay thế bằng tên người dùng thực tế
-            userImage: 'trinhthangbinh.jpg' // Thay thế bằng ảnh người dùng thực tế
+            userId: userCurrent._id, // Thay thế bằng ID người dùng thực tế
+            userName: userCurrent.name, // Thay thế bằng tên người dùng thực tế
+            userImage: 'duy.jpg' // Thay thế bằng ảnh người dùng thực tế
         };
     
         // const commentFormat = {
@@ -89,12 +90,12 @@ export default function Feed() {
 
     const handleAddReply = async (songId, commentIdCurrent) => {
         console.log(commentIdCurrent);
-        
+         
         const reply = {
-          text: input,
-          userId: '673a2a5f420d40f7a0504dbc', // Thay thế bằng ID người dùng thực tế
-          userName: 'Trần Vũ Duy', // Thay thế bằng tên người dùng thực tế
-          userImage: 'trinhthangbinh.jpg' // Thay thế bằng ảnh người dùng thực tế
+            text: input,
+            userId: userCurrent._id, 
+            userName: userCurrent.name, 
+            userImage: 'duy.jpg'
         };
        
         
@@ -141,24 +142,26 @@ export default function Feed() {
         <ScrollView showsVerticalScrollIndicator={false}>
             {songs.map(song => (
                 <View key={song._id} style={feedStyle.feedContainer}>
-                    {/* Feed content */}
-                    <View style={feedStyle.feedTitle}>
-                        <Image 
-                            style={feedStyle.feedAvatar} 
-                            source={{uri: `${API_URL}/assets/images/artist/${song.artist.image}`}}
-                        />
-                        <View>
-                            <View style={feedStyle.feedName}>
-                                <Text style={feedStyle.feedNameText}>{song.artist.name}</Text>
-                                <TickBlueIcon />
-                            </View>
-                            <View style={feedStyle.feedTime}>
-                                <Text style={feedStyle.feedTimeText}>Posted a track</Text>
-                                <CircleIcon />
-                                <Text style={feedStyle.feedTimeText}>{getTimeDifference(song.timestamp)}</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Artist')}>
+                        {/* Feed content */}
+                        <View style={feedStyle.feedTitle}>
+                            <Image 
+                                style={feedStyle.feedAvatar} 
+                                source={{uri: `${API_URL}/assets/images/artist/${song.artist.image}`}}
+                            />
+                            <View>
+                                <View style={feedStyle.feedName}>
+                                    <Text style={feedStyle.feedNameText}>{song.artist.name}</Text>
+                                    <TickBlueIcon />
+                                </View>
+                                <View style={feedStyle.feedTime}>
+                                    <Text style={feedStyle.feedTimeText}>Posted a track</Text>
+                                    <CircleIcon />
+                                    <Text style={feedStyle.feedTimeText}>{getTimeDifference(song.timestamp)}</Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => setCurrentSong(song)}>
                         <ImageBackground
                             style={feedStyle.feedimageBackgroundContainer}
@@ -228,7 +231,7 @@ export default function Feed() {
                                 <View style={styles.inputInputImage}>
                                     <Image
                                         style={styles.image}
-                                        source={require('../../../assets/home/Image45.png')}
+                                        source={{uri: `${API_URL}/assets/images/artist/${userCurrent.image}`}}
                                     />
                                     <View style={styles.inputContainer}>
                                         <TextInput

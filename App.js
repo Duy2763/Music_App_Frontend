@@ -18,6 +18,8 @@ import OptionPremium from './src/components/end/optionPremium.jsx';
 import { AppProvider } from './src/components/contextAPI/appContext.js';
 import MiniPlayer from './src/miniPlayer.jsx';
 import Begin from './src/components/launch/begin.jsx';
+import SignIn from './src/components/launch/signIn.jsx';
+import SignUp from './src/components/launch/signUp.jsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -50,7 +52,7 @@ const SeedStack = () => (
 )
 
 const MainStack = () => (
-  <Tab.Navigator tabBar={(props) => <Navbar {...props} />}>
+  <Tab.Navigator tabBar={(props) => <Navbar {...props}/>}>
     <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
     <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} />
     <Tab.Screen name="Feed" component={SeedStack} options={{ headerShown: false }} />
@@ -65,6 +67,9 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name='Begin' component={Begin} options={{headerShown: false}}/>
+            <Stack.Screen name='SignUp' component={SignUp} options={{headerShown: false}}/>
+            <Stack.Screen name='SignIn' component={SignIn} options={{headerShown: false}}/>
+            <Stack.Screen name='MainStack' component={MainStack} options={{headerShown: false}}/>
           </Stack.Navigator>
         </NavigationContainer>
         <MiniPlayer/>
