@@ -6,7 +6,8 @@ import Feed from "./feed"
 import feedStyle from "../../styles/feed/feedStyle.js"
 import { API_URL } from '@env';
 import { getAllSongs } from "../../../api.js"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import { AppContext } from "../contextAPI/appContext.js"
 
 
 export default function FeedScreen() {
@@ -21,7 +22,7 @@ export default function FeedScreen() {
     //     {id: '2', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Container27.png')},
     // ]
 
-
+    const { currentSong } = useContext(AppContext);
    
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: colors.secondaryColor}}>

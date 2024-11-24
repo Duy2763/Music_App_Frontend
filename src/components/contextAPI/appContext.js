@@ -1,5 +1,6 @@
 import { Audio } from 'expo-av';
 import React, { createContext, useRef, useState } from 'react';
+import { API_URL } from '@env';
 
 export const AppContext = createContext();
 
@@ -15,14 +16,21 @@ export const AppProvider = ({ children }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Thêm trạng thái chỉ mục hiện tại
   const [isPlaying, setPlaying] = useState(false);
   const sound = useRef(new Audio.Sound());
+  const [isShuffle, setIsShuffle] = useState(false);
 
-  const playNextSong = () => {
-    if (currentIndex < playlist.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setCurrentSong(playlist[currentIndex + 1]);
+  const playNextSong = async () => {
+    if (isShuffle) {
+      const randomIndex = Math.floor(Math.random() * playlist.length);
+      setCurrentIndex(randomIndex);
+      await loadSound(playlist[randomIndex]);
     } else {
-      setCurrentIndex(0);
-      setCurrentSong(playlist[0]);
+      if (currentIndex < playlist.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+        await loadSound(playlist[currentIndex + 1]);
+      } else {
+        setCurrentIndex(0);
+        await loadSound(playlist[0]);
+      }
     }
   };
 
@@ -32,7 +40,7 @@ export const AppProvider = ({ children }) => {
         await sound.current.playAsync();
         setPlaying(true);
       } catch (error) {
-        console.error('Error playing sound:', error);
+        // console.error('Error playing sound:', error);
       }
     }
   };
@@ -43,7 +51,7 @@ export const AppProvider = ({ children }) => {
         await sound.current.pauseAsync();
         setPlaying(false);
       } catch (error) {
-        console.error('Error pausing sound:', error);
+        // console.error('Error pausing sound:', error);
       }
     }
   };
@@ -51,11 +59,11 @@ export const AppProvider = ({ children }) => {
   const loadSound = async (song) => {
     try {
       await sound.current.unloadAsync();
-      await sound.current.loadAsync({ uri: song.linkAudio });
+      await sound.current.loadAsync({ uri: `${API_URL}/assets/audios/${currentSong.linkAudio}` });
       setCurrentSong(song);
       setPlaying(false);
     } catch (error) {
-      console.error('Error loading sound:', error);
+      // console.error('Error loading sound:', error);
     }
   };
 
@@ -85,7 +93,9 @@ export const AppProvider = ({ children }) => {
         pause,
         loadSound,
         isPlaying,
-        setPlaying
+        setPlaying,
+        isShuffle,
+        setIsShuffle
       }}>
       {children}
     </AppContext.Provider>

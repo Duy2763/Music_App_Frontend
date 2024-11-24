@@ -2,7 +2,7 @@ import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Animated
 import LeftIcon from "../icon/leftIcon";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import IconAndSoOn from "../icon/iconAndSoOn";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import SuffleIcon from "../icon/suffleIcon";
 import SuffleIconActive from "../icon/suffleIconActive";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -11,6 +11,7 @@ import RenderListAlbume from "./renderListAlbume";
 import colors from "../../colors";
 import { API_URL } from '@env';
 import { getAlbumsByArtist, getAllAlbums, getSongsByArtist } from "../../../api";
+import { AppContext } from "../contextAPI/appContext";
 
 
 export default function ArtistScreen() {
@@ -20,11 +21,11 @@ export default function ArtistScreen() {
     const [albums, setAlbums] = useState([]);
     const [albumsByArtist, setAlbumsByArtist] = useState([]);
     const [songs, setSongs] = useState([]);
-    const [isActiveSuffle, setActiveSuffle] = useState(false);
     const [isActiveViewMore, setActiveViewMore] = useState(false);
     const [isRotating, setIsRotating] = useState(false);
     const rotation = useRef(new Animated.Value(0)).current;
     const scale = useRef(new Animated.Value(1)).current;
+    const { playlist, setPlaylist, setCurrentSong, currentSong, isShuffle, setIsShuffle, setPlaying } = useContext(AppContext);
 
     const fetchSongs = async () => {
         try {
@@ -51,6 +52,29 @@ export default function ArtistScreen() {
         } catch (error) {
           console.error('Error fetching songs:', error);
         } 
+    };
+
+    const shuffleArray = (array) => {
+        let shuffledArray = array.slice();
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+        }
+        return shuffledArray;
+    };
+
+    const handleShuffle = () => {
+        const shuffledSongs = shuffleArray(songs);
+        setPlaylist(shuffledSongs);
+        // setCurrentSong(shuffledSongs[0]);
+        setIsShuffle(!isShuffle);
+    };
+
+
+    const handlePlayArtistAlbum = () => {
+        setPlaylist(songs);
+        setCurrentSong(songs[0]);
+        setPlaying(true);
     };
 
     const getDisplayText = (text) => {
@@ -116,7 +140,7 @@ export default function ArtistScreen() {
                 <LeftIcon />
             </TouchableOpacity>
             <Animated.ScrollView onScroll={handleScroll} scrollEventThrottle={16}  showsVerticalScrollIndicator={false}>
-                <View style={styles.container}>
+                <View style={[styles.container, {marginBottom: currentSong ? 78 : 0}]}>
                     <View style={{ alignItems: 'center', gap: 8 }}>
                         <Animated.Image
                             style={[
@@ -138,10 +162,16 @@ export default function ArtistScreen() {
                             <IconAndSoOn />
                         </View>
                         <View style={styles.headerBottomRight}>
-                            <TouchableOpacity onPress={() => setActiveSuffle(!isActiveSuffle)}>
-                                {isActiveSuffle ? <SuffleIconActive /> : <SuffleIcon />}
+                            <TouchableOpacity onPress={() => {
+                                setIsShuffle(!isShuffle);
+                                handleShuffle();
+                            }}>
+                                {isShuffle ? <SuffleIconActive /> : <SuffleIcon />}
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={handlePlayPress}>
+                            <TouchableOpacity onPress={() => {
+                                handlePlayPress();
+                                handlePlayArtistAlbum();
+                            }}>
                                 <View style={styles.playButton}>
                                     <Icon name="play" size={25} color="#fff" />
                                 </View>

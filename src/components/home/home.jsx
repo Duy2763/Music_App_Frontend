@@ -4,12 +4,14 @@ import { TouchableOpacity } from "react-native"
 import { TextInput } from "react-native"
 import { Image } from "react-native"
 import { SafeAreaView, Text, View } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { CommonActions, useNavigation } from "@react-navigation/native"
 import RenderListAlbume from "./renderListAlbume"
 import RenderListArtist from './renderListArtist'
 import { getAllAlbums, getAllArtists, getAllSongs, getFirstThreeSongs } from "../../../api"
 import { API_URL } from '@env';
 import { AppContext } from "../contextAPI/appContext"
+import Icon from 'react-native-vector-icons/FontAwesome';
+import colors from "../../colors"
 
 
 export default function HomeScreen() {
@@ -53,7 +55,6 @@ export default function HomeScreen() {
     };
 
     useEffect(() => {
-       
         fetchSongs();
         fetchAlbums();
         fetchArtists();
@@ -133,15 +134,29 @@ export default function HomeScreen() {
                         source={require('../../../assets/home/Image36.png')}
                     />
                     <View style={styles.headerRight}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.dispatch(
+                                    CommonActions.reset({
+                                      index: 0,
+                                      routes: [{ name: 'Begin' }],
+                                    })
+                                  );
+                            }}
+                            style={{alignItems: 'center', flexDirection: 'row', gap: 2}}
+                        >
+                            <Text style={{color: colors.thirdColor}}>Sign out</Text>
+                            <Icon name="sign-out" size={25} color={colors.thirdColor} />
+                        </TouchableOpacity>
                         <Image
-                            // source={{uri: `${API_URL}/assets/images/artist/${userCurrent.image}`}}
+                            source={{uri: `${API_URL}/assets/images/artist/${userCurrent.image}`}}
                             style={{width: 40, height: 40, borderRadius: 32}}
                         />
                     </View>
                 </View>
                 <View style={{ marginVertical: 24 }}>
-                    <Text style={{ color: 'darkgray', fontSize: 16, marginBottom: 4 }}>Good morning,</Text>
-                    {/* <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>{userCurrent.name}</Text> */}
+                    <Text style={{ color: 'darkgray', fontSize: 16, marginBottom: 4 }}>Good afternoon,</Text>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>{userCurrent.name}</Text>
                     <View style={styles.search}>
                         <Image
                             style={styles.searchIcon}
@@ -196,6 +211,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     headerRight: {
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     search: {
         flexDirection: 'row',

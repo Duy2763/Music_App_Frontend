@@ -2,7 +2,7 @@ import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Animated
 import LeftIcon from "../icon/leftIcon";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import IconAndSoOn from "../icon/iconAndSoOn";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import SuffleIcon from "../icon/suffleIcon";
 import SuffleIconActive from "../icon/suffleIconActive";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -10,28 +10,17 @@ import RenderListSongs from "./renderListSongs";
 import HeartIconActive from "../icon/heartIconActive";
 import { API_URL } from '@env';
 import { getSongsByAlbum } from "../../../api";
+import { AppContext } from "../contextAPI/appContext";
 
 export default function AlbumeScreen() {
     const navigation = useNavigation();
     const route = useRoute();
     const { albume } = route.params;
-    const [isActiveSuffle, setActiveSuffle] = useState(false);
-    const [isActiveViewMore, setActiveViewMore] = useState(false);
     const [isRotating, setIsRotating] = useState(false);
     const rotation = useRef(new Animated.Value(0)).current;
     const [isActiveHeart, setActiveHeart] = useState(false);
     const [songs, setSongs] = useState([]);
-
-    const arrSongs = [
-        { id: '1', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Image101.png'), plays: 2.1, duaration: '3:36' },
-        { id: '2', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Image102.png'), plays: 2.1, duaration: '3:36' },
-        { id: '3', name: 'In the starts 2', artist: 'Benson Boone 2', hinhAnh: require('../../../assets/home/Image103.png'), plays: 2.1, duaration: '3:36' },
-        { id: '4', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Image101.png'), plays: 2.1, duaration: '3:36' },
-        { id: '5', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Image102.png'), plays: 2.1, duaration: '3:36' },
-        { id: '6', name: 'In the starts 2', artist: 'Benson Boone 2', hinhAnh: require('../../../assets/home/Image103.png'), plays: 2.1, duaration: '3:36' },
-        { id: '7', name: 'Reflection', artist: 'Christina Aguilera', hinhAnh: require('../../../assets/home/Image101.png'), plays: 2.1, duaration: '3:36' },
-        { id: '8', name: 'In the starts', artist: 'Benson Boone', hinhAnh: require('../../../assets/home/Image102.png'), plays: 2.1, duaration: '3:36' },
-    ];
+    const { playlist, setPlaylist, setCurrentSong, currentSong, isShuffle, setIsShuffle, setPlaying } = useContext(AppContext);
 
     const fetchSongs = async () => {
         try {
@@ -42,12 +31,34 @@ export default function AlbumeScreen() {
         } 
     };
 
-    const getDisplayText = (text) => {
-        if (isActiveViewMore) {
-            return text;
+    const shuffleArray = (array) => {
+        let shuffledArray = array.slice();
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
         }
-        return text.length > 150 ? text.substring(0, 150) + '...' : text;
+        return shuffledArray;
     };
+
+    const handleShuffle = () => {
+        const shuffledSongs = shuffleArray(songs);
+        setPlaylist(shuffledSongs);
+        // setCurrentSong(shuffledSongs[0]);
+        setIsShuffle(!isShuffle);
+    };
+
+
+    const handlePlayAlbum = () => {
+        setPlaylist(songs);
+        setCurrentSong(songs[0]);
+        setPlaying(true);
+    };
+    // const getDisplayText = (text) => {
+    //     if (isActiveViewMore) {
+    //         return text;
+    //     }
+    //     return text.length > 150 ? text.substring(0, 150) + '...' : text;
+    // };
 
     const startRotation = () => {
         Animated.loop(
@@ -94,7 +105,7 @@ export default function AlbumeScreen() {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content" />
-            <View style={styles.container}>
+            <View style={[styles.container, {marginBottom: currentSong ? 78 : 0}]}>
                 <View>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <LeftIcon />
@@ -115,10 +126,16 @@ export default function AlbumeScreen() {
                             <IconAndSoOn />
                         </View>
                         <View style={styles.headerBottomRight}>
-                            <TouchableOpacity onPress={() => setActiveSuffle(!isActiveSuffle)}>
-                                {isActiveSuffle ? <SuffleIconActive /> : <SuffleIcon />}
+                            <TouchableOpacity onPress={() => {
+                                setIsShuffle(!isShuffle)
+                                handleShuffle();
+                            }}>
+                                {isShuffle ? <SuffleIconActive /> : <SuffleIcon />}
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={handlePlayPress}>
+                            <TouchableOpacity onPress={() => {
+                                handlePlayPress();
+                                handlePlayAlbum();
+                            }}>
                                 <View style={styles.playButton}>
                                     <Icon name="play" size={25} color="#fff" />
                                 </View>

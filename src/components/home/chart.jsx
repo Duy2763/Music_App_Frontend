@@ -24,10 +24,9 @@ export default function ChartScreen() {
     const navigation = useNavigation();
     const { chart } = route.params;
     const [isActiveHeart, setActiveHeart] = useState(false);
-    const [isActiveSuffle, setActiveSuffle] = useState(false);
     const [songs, setSongs] = useState([]);
-    const [isPlaying, setPlaying] = useState(false);
-    const { setPlaylist, setCurrentSong, currentSong } = useContext(AppContext);
+    // const [isPlaying, setPlaying] = useState(false);
+    const { playlist, setPlaylist, setCurrentSong, currentSong, isShuffle, setIsShuffle, isPlaying, setPlaying } = useContext(AppContext);
 
     const fetchSongs = async () => {
         try {
@@ -49,12 +48,29 @@ export default function ChartScreen() {
         fetchSongs();
     }, []);
 
+    const shuffleArray = (array) => {
+        let shuffledArray = array.slice();
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+        }
+        return shuffledArray;
+    };
+
+    const handleShuffle = () => {
+        const shuffledSongs = shuffleArray(songs);
+        setPlaylist(shuffledSongs);
+        // setCurrentSong(shuffledSongs[0]);
+        setIsShuffle(!isShuffle);
+    };
+
+
     const handlePlayTop10 = () => {
         setPlaylist(songs);
         setCurrentSong(songs[0]);
         setPlaying(true);
     };
-
+   
     const handlePlayPause = () => {
         if (isPlaying) {
             // Dừng phát nhạc
@@ -72,7 +88,7 @@ export default function ChartScreen() {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <StatusBar backgroundColor="#fff" barStyle="dark-content" />
-            <View style={styles.container}>
+            <View style={[styles.container, {marginBottom: currentSong ? 78 : 0}]}>
                 <View style={styles.headerTop}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <LeftIcon />
@@ -103,11 +119,17 @@ export default function ChartScreen() {
                         <IconAndSoOn />
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 32 }}>
-                        <TouchableOpacity onPress={() => setActiveSuffle(!isActiveSuffle)}>
-                            {isActiveSuffle ? <SuffleIconActive /> : <SuffleIcon />}
+                        <TouchableOpacity onPress={() => {
+                            setIsShuffle(!isShuffle);
+                            handleShuffle();
+                        }}>
+                            {isShuffle ? <SuffleIconActive /> : <SuffleIcon />}
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-                            {isPlaying ? <Icon name="pause" size={25} color="#fff" /> : <Icon name="play" size={25} color="#fff" />}
+                        <TouchableOpacity style={styles.playButton} onPress={() => {
+                            handlePlayPause();
+                            handlePlayTop10();
+                        }}>
+                            <Icon name="play" size={25} color="#fff" />
                         </TouchableOpacity>
                     </View>
                 </View>

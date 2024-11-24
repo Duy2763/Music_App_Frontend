@@ -37,21 +37,24 @@ export default function MiniPlayer({ song }) {
             }
         };
     }, [currentSong]);
-
+    
     const loadSound = async () => {
         try {
+            if (sound) {
+                await sound.unloadAsync(); // Dỡ bỏ âm thanh hiện tại trước khi tải âm thanh mới
+            }
             console.log('API_URL:', API_URL); 
-            const { sound } = await Audio.Sound.createAsync(
+            const { sound: newSound } = await Audio.Sound.createAsync(
                 { uri: `${API_URL}/assets/audios/${currentSong.linkAudio}` },
                 { shouldPlay: false }
             );
-            setSound(sound);
-            const status = await sound.getStatusAsync();
+            setSound(newSound);
+            const status = await newSound.getStatusAsync();
             console.log('Sound status:', status); 
             setDuration(status.durationMillis / 1000);
-            sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+            newSound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
             if (isPlaying) {
-                await sound.playAsync();
+                await newSound.playAsync();
             }
         } catch (error) {
             console.error('Error loading sound:', error); 
