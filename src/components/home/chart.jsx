@@ -133,7 +133,9 @@ export default function ChartScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <RenderListSongs data={songs} />
+                <View style={{ marginBottom: 500}}>
+                    <RenderListSongs data={songs} />
+                </View>
             </View>
         </SafeAreaView>
     );
