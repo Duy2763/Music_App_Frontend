@@ -51,10 +51,18 @@ const SeedStack = () => (
   </Stack.Navigator>
 )
 
+const SearchStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name='SearchScreen' component={SearchScreen} options={{headerShown: false}}/>
+    <Stack.Screen name='Albume' component={AlbumeScreen} options={{headerShown: false}}/>
+    <Stack.Screen name='Artist' component={ArtistScreen} options={{headerShown: false}}/>
+  </Stack.Navigator>
+)
+
 const MainStack = () => (
   <Tab.Navigator tabBar={(props) => <Navbar {...props}/>}>
     <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
-    <Tab.Screen name="Search" component={SearchScreen}  options={{ headerShown: false }} />
+    <Tab.Screen name="Search" component={SearchStack}  options={{ headerShown: false }} />
     <Tab.Screen name="Feed" component={SeedStack} options={{ headerShown: false }} />
     <Tab.Screen name="Library" component={LibraryStack} options={{ headerShown: false }} />
   </Tab.Navigator>

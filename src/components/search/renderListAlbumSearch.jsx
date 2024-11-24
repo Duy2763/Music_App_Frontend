@@ -6,16 +6,18 @@ import { AppContext } from "../contextAPI/appContext";
 import { useContext } from "react";
 import colors from "../../colors";
 import UserIconTemplate from "../icon/userIconTemplate";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RenderListAlbumSearch({ data }) {
     const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong } = useContext(AppContext);
-
+    const navigation = useNavigation();
     return (
         <View>
             {data.map(item => (
                 <TouchableOpacity 
                     key={`${item._id}`}
                     style={styles.flatItem}
+                    onPress={() => { navigation.navigate('Albume', { albume: item }) }}
                     // onPress={() => setCurrentSong(item)}
                 >
                     <View style={styles.flatContent}>

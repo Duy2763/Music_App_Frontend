@@ -6,17 +6,18 @@ import { AppContext } from "../contextAPI/appContext";
 import { useContext } from "react";
 import colors from "../../colors";
 import UserIconTemplate from "../icon/userIconTemplate";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RenderListArtistSearch({ data }) {
     const { currentSong, currentTime, setCurrentTime, duration, setDuration, setCurrentSong } = useContext(AppContext);
-
+    const navigation = useNavigation();
     return (
         <View>
             {data.map(item => (
                 <TouchableOpacity 
                     key={`${item._id}`}
                     style={styles.flatItem}
-                    // onPress={() => setCurrentSong(item)}
+                    onPress={() => { navigation.navigate('Artist', { artist: item }) }}
                 >
                     <View style={styles.flatContent}>
                         <View style={styles.flatContentLeft}>

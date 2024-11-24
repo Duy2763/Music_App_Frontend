@@ -64,7 +64,7 @@ export default function AlbumeScreen() {
         Animated.loop(
             Animated.timing(rotation, {
                 toValue: 1,
-                duration: 2000,
+                duration: 4000,
                 easing: Easing.linear,
                 useNativeDriver: true,
             })
